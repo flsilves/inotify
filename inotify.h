@@ -8,8 +8,10 @@
 static void displayInotifyEvent(struct inotify_event *i)
 {
     printf(" wd =%2d; ", i->wd);
-    if (i->cookie > 0)
+    if (i->cookie > 0) {
         printf("cookie =%4d; ", i->cookie);
+    }
+
     printf("mask = ");
     if (i->mask & IN_ACCESS) printf("IN_ACCESS ");
     if (i->mask & IN_ATTRIB) printf("IN_ATTRIB ");
@@ -27,12 +29,12 @@ static void displayInotifyEvent(struct inotify_event *i)
     if (i->mask & IN_OPEN) printf("IN_OPEN ");
     if (i->mask & IN_Q_OVERFLOW) printf("IN_Q_OVERFLOW ");
     if (i->mask & IN_UNMOUNT) printf("IN_UNMOUNT ");
+    
     printf("\n");
-    if (i->len > 0)
+    if (i->len > 0) {
         printf(" name = %s\n", i->name);
+    }
 }
-
-
 
 #endif /* INOTIFY_H */
 
