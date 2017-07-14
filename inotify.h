@@ -5,8 +5,11 @@
 #include <stdio.h> 
 #include <stdlib.h> 
 
-static void displayInotifyEvent(struct inotify_event *i)
-{
+template <class T> void print_container(T list);
+void folder_listener(int inotify_instance);
+
+static void displayInotifyEvent(struct inotify_event *i) {
+    
     printf(" wd =%2d; ", i->wd);
     if (i->cookie > 0) {
         printf("cookie =%4d; ", i->cookie);
