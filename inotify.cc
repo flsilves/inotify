@@ -1,19 +1,14 @@
-#include "inotify.h"
 
-#include <iostream>
-#include <limits.h> 
-#include <thread>
-#include <unistd.h>
-#include <string.h>
-#include <algorithm>
-#include <set>
-#include <sys/inotify.h>
+#include "inotify.h"
 
 #define BUF_LEN (10 * (sizeof(struct inotify_event) + NAME_MAX + 1))
 
 using namespace std;
 
 set<string> file_list;
+
+mutex cv_m;
+condition_variable cv;
 
 int main(int argc, char *argv[]) { 
 
@@ -43,8 +38,10 @@ int main(int argc, char *argv[]) {
     }
 
     thread thread1(folder_listener, inotify_instance);
+    thread thread2(consume_files);
+
     thread1.join();
-    //thread2.join();
+    thread2.join();
 
     exit(EXIT_SUCCESS);
 }
@@ -55,7 +52,7 @@ void folder_listener(int inotify_instance) {
     char buf[BUF_LEN];
     char *buffer_pointer;
     struct inotify_event *event;
-
+    
 
     while(1) {
         num_read = read(inotify_instance, buf, BUF_LEN);
@@ -74,21 +71,43 @@ void folder_listener(int inotify_instance) {
 
         for (buffer_pointer = buf; buffer_pointer < buf + num_read;   ) {
             event = (struct inotify_event *) buffer_pointer;
-            //displayInotifyEvent(event);
-            //cout << std::this_thread::get_id() << endl; 
 
+            unique_lock<mutex> lk(cv_m);
             file_list.insert(event->name);
-            print_container(file_list);
+            print_container();
+            cv.notify_one();
             buffer_pointer += sizeof (struct inotify_event) +event->len;
         }
     }
 }
 
-template <class T> void print_container(T list) {
-    auto it = list.begin();  
+void consume_files(){
+    
+    cout << "Consumer thread" << endl;
+    while(1)
+    {   
+        unique_lock<mutex> lk(cv_m);
+        cout << "Waiting... \n";
+        cv.wait(lk, []{return file_list.size() !=0 ;});
+
+        cout << "Consumer size " << file_list.size() << endl;
+        auto it = file_list.begin();
+        while(it != file_list.end())
+        {
+                file_list.erase(it);
+                cout << "Removed item from list" << endl;
+                it++;
+                usleep(1000000);
+       }
+    }
+}
+
+
+void print_container() {
+    auto it = file_list.begin();  
 
     cout << "LIST: [";
-    while(it != list.end())
+    while(it != file_list.end())
         cout << ' ' << *it++;
     
     cout << "]" << endl;

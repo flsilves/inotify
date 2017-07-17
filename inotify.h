@@ -1,11 +1,27 @@
 #ifndef INOTIFY_H
 #define INOTIFY_H
 
+#include <condition_variable>
+#include <thread>
+#include <mutex>
+#include <iostream>
 #include <sys/inotify.h>
 #include <stdio.h> 
-#include <stdlib.h> 
+#include <iostream>
+#include <limits.h> 
+#include <thread>
+#include <unistd.h>
+#include <string.h>
+#include <algorithm>
+#include <set>
+#include <sys/inotify.h>
 
-template <class T> void print_container(T list);
+
+using namespace std;
+
+void print_container();
+
+void consume_files();
 void folder_listener(int inotify_instance);
 
 static void displayInotifyEvent(struct inotify_event *i) {

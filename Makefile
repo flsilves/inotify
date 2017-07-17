@@ -1,12 +1,12 @@
-CC=g++
-CFLAGS=-I.
+CC=g++ 
+CFLAGS=-ggdb -I. 
 DEPS = inotify.h
 OBJ = inotify.o
 TARGET = inotify_runner
 LIBS = -lpthread
 
-%.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
+%.o: %.cc $(DEPS)
+	$(CC)-c -o $@ $< $(CFLAGS)
 
 $(TARGET): $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
