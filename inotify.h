@@ -19,17 +19,15 @@
 #include <sys/stat.h>
 #include <sys/select.h>
 #include <sys/time.h>
-
 #include "myTimer.h"
-
 
 using namespace std;
 
 int audit_folder();
-template <class T> std::ostream& operator<< (std::ostream& os, const std::set<T>& v);
 void consume_files();
 void folder_listener(int inotify_instance);
 char* concat(const char *s1, const char *s2);
+template <class T> std::ostream& operator<< (std::ostream& os, const std::set<T>& v);
 
 static void displayInotifyEvent(struct inotify_event *i) {
     
