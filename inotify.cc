@@ -148,7 +148,7 @@ ostream& operator << (ostream& os, const set<T>& v) {
     return os;
 }
 
-int audit_folder(char* folder) {
+int audit_folder(const char* folder) {
 
     DIR *dir = 0;
     struct dirent *ent = 0;
