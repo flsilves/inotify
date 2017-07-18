@@ -101,16 +101,15 @@ void consume_files(){
         auto it = file_list.begin();
         while(it != file_list.end())
         {
-                file_list.erase(it);
-                cout << "Consumer thread: Removed item from list" << endl;
-                it++;
+                file_list.erase(it++);
+                cout << "Consumer thread: Removed item from list" << endl;               
                 usleep(1000000);
        }
     }
 }
 
 
-void print_container() {
+void print_container() { //TODO: override <operator
     auto it = file_list.begin();  
 
     cout << "LIST: [";
