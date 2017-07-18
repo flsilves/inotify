@@ -1,11 +1,9 @@
-
 #include "inotify.h"
 
 #define BUF_LEN (10 * (sizeof(struct inotify_event) + NAME_MAX + 1))
+#define INOTIFY_EVENTS (IN_MOVED_FROM | IN_MOVED_TO | IN_CLOSE_WRITE)
 
 using namespace std;
-
-#define INOTIFY_EVENTS (IN_MOVED_FROM | IN_MOVED_TO | IN_CLOSE_WRITE)
 
 set<string> file_list;
 
@@ -50,8 +48,9 @@ int main(int argc, char *argv[]) {
 
 void folder_listener(int inotify_fd) {
 
-    //Timer timer;
-    //timer.start();
+    Timer timer;
+    timer.start();
+
     ssize_t num_read;
     char buf[BUF_LEN];
     char *buffer_pointer;
@@ -60,6 +59,8 @@ void folder_listener(int inotify_fd) {
 
     while(1) {
 
+        cout << "Timer: " << endl;
+        cout << timer.elapsedSeconds() << endl;
         cout << "Inotify listener: waiting for events" << endl;
         struct timeval timeout;
         timeout.tv_sec = 5;     // Set timeout to 2.0 seconds
@@ -104,11 +105,11 @@ void folder_listener(int inotify_fd) {
             printf("Read timeout \n");
         }
 
-       /* if(timer.elapsedSeconds() < 10.0)
+        if(timer.elapsedSeconds() > 20.0)
         {
             getFileNameList();
             timer.restart();
-        }*/
+        }
 
         printf("Inotify listener: notifying\n");
         cv.notify_one();

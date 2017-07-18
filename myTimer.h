@@ -46,6 +46,7 @@ private:
     bool m_bRunning = false;
 };
 
+/*
 int main()
 {
 
@@ -65,4 +66,4 @@ int main()
     std::cout << "Seconds: " << timer.elapsedSeconds() << std::endl;
     std::cout << "Milliseconds: " << timer.elapsedMilliseconds() << std::endl
     ;
-}
+}*/
