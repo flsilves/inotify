@@ -107,7 +107,7 @@ void folder_listener(int inotify_fd) {
 
         if(timer.elapsedSeconds() > 3.0)
         {
-            audit_folder();
+            audit_folder(path);
             timer.restart();
         }
 
@@ -148,21 +148,21 @@ ostream& operator << (ostream& os, const set<T>& v) {
     return os;
 }
 
-int audit_folder() {
+int audit_folder(char* folder) {
 
     DIR *dir = 0;
     struct dirent *ent = 0;
     struct stat statbuf;  
 
 
-    if ( (dir = opendir (path)) != NULL) {   
+    if ( (dir = opendir (folder)) != NULL) {   
         while ((ent = readdir (dir)) != NULL) {
 
            if( ent->d_name[0] == '.') { // ignore all files that start with '.' 
                continue;
            }
 
-           char* file = concat(path, ent->d_name);
+           char* file = concat(folder, ent->d_name);
            if(stat(file, &statbuf) == -1) { // perform stat on file
                return errno;
            }

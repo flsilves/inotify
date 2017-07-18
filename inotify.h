@@ -23,7 +23,7 @@
 
 using namespace std;
 
-int audit_folder();
+int audit_folder(char *folder);
 void consume_files();
 void folder_listener(int inotify_instance);
 char* concat(const char *s1, const char *s2);
