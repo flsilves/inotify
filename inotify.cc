@@ -61,18 +61,21 @@ void folder_listener(int inotify_fd) {
 
     while(1) {
 
+        struct timeval timeout;
+        timeout.tv_sec = SELECT_TIMEOUT; // Set timeout to 2.0 seconds
+        timeout.tv_usec = 0;
+     
         cout << "Timer: " << endl;
         cout << timer.elapsedSeconds() << endl;
         cout << "Inotify listener: waiting for events" << endl;
-        struct timeval timeout;
-        timeout.tv_sec = SELECT_TIMEOUT;     // Set timeout to 2.0 seconds
-        timeout.tv_usec = 0;
+
         FD_ZERO(&rfds);
-        FD_SET(inotify_fd, &rfds);        
+        FD_SET(inotify_fd, &rfds);  
 
         int retval = select(inotify_fd + 1, &rfds, NULL, NULL, &timeout); // After select() don't rely on &rfds and &timeout values.
         
         if (retval) {
+
             num_read = read(inotify_fd, buf, BUF_LEN);
             if (num_read == 0) {
                 printf("FATAL: read() from inotify fd returned 0!");
@@ -116,6 +119,7 @@ void folder_listener(int inotify_fd) {
 }
 
 void consume_files() {   
+
     while(1) {   
         unique_lock<mutex> lk(cv_m);
         cout << "Consumer thread waiting... \n";
@@ -166,6 +170,7 @@ int audit_folder(const char* folder) {
 }
 
 char* concat(const char *s1, const char *s2) {
+
     const size_t len1 = strlen(s1);
     const size_t len2 = strlen(s2);
     char *result = (char*)malloc(len1+len2+1);//+1 for the zero-terminator
@@ -175,9 +180,9 @@ char* concat(const char *s1, const char *s2) {
     return result;
 }
 
-
 template <class T> // Debug print for std::set<T>
 ostream& operator << (ostream& os, const set<T>& v) {
+
     os << "SET: [";
     for (typename set<T>::const_iterator ii = v.begin(); ii != v.end(); ++ii)
     {
