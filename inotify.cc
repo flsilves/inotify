@@ -5,8 +5,8 @@
 
 using namespace std;
 
+const char* path = "/home/frs/inotify/watch/";
 set<string> file_list;
-
 mutex cv_m;
 condition_variable cv;
 
@@ -63,7 +63,7 @@ void folder_listener(int inotify_fd) {
         cout << timer.elapsedSeconds() << endl;
         cout << "Inotify listener: waiting for events" << endl;
         struct timeval timeout;
-        timeout.tv_sec = 5;     // Set timeout to 2.0 seconds
+        timeout.tv_sec = 1;     // Set timeout to 2.0 seconds
         timeout.tv_usec = 0;
         FD_ZERO(&rfds);
         FD_SET(inotify_fd, &rfds);        
@@ -105,9 +105,9 @@ void folder_listener(int inotify_fd) {
             printf("Read timeout \n");
         }
 
-        if(timer.elapsedSeconds() > 20.0)
+        if(timer.elapsedSeconds() > 3.0)
         {
-            getFileNameList();
+            audit_folder();
             timer.restart();
         }
 
@@ -126,11 +126,12 @@ void consume_files(){
 
         cout << "Consumer thread: backlog size " << file_list.size() << endl;
         auto it = file_list.begin();
+
         while(it != file_list.end())
         {
-                file_list.erase(it++);
-                cout << "Consumer thread: Removed item from list" << endl;               
-                usleep(1000000);
+            file_list.erase(it++);
+            cout << "Consumer thread: Removed item from list" << endl;               
+            usleep(1000000);
        }
     }
 }
@@ -138,7 +139,7 @@ void consume_files(){
 
 template <class T> // Debug print for std::set<T>
 ostream& operator << (ostream& os, const set<T>& v) {
-    os << "[";
+    os << "SET: [";
     for (typename set<T>::const_iterator ii = v.begin(); ii != v.end(); ++ii)
     {
         os << " " << *ii;
@@ -147,13 +148,12 @@ ostream& operator << (ostream& os, const set<T>& v) {
     return os;
 }
 
-int getFileNameList() {
+int audit_folder() {
 
     DIR *dir = 0;
     struct dirent *ent = 0;
-    struct stat statbuf;
+    struct stat statbuf;  
 
-    const char* path = "/home/frs/inotify";
 
     if ( (dir = opendir (path)) != NULL) {   
         while ((ent = readdir (dir)) != NULL) {
@@ -162,18 +162,32 @@ int getFileNameList() {
                continue;
            }
 
-           if(stat(ent->d_name, &statbuf) == -1) { // perform stat on file
+           char* file = concat(path, ent->d_name);
+           if(stat(file, &statbuf) == -1) { // perform stat on file
                return errno;
            }
 
+           free(file);
+
            if(S_ISREG(statbuf.st_mode)) { // check if file isn't a directory and has right permissions
-               printf ("%s\n", ent->d_name);
+               file_list.insert(ent->d_name);
            }
 
         }        
-        closedir (dir);       
+        closedir (dir);      
+
     } else {            
         return EXIT_FAILURE;
     }
 }
 
+char* concat(const char *s1, const char *s2)
+{
+    const size_t len1 = strlen(s1);
+    const size_t len2 = strlen(s2);
+    char *result = (char*)malloc(len1+len2+1);//+1 for the zero-terminator
+    //in real code you would check for errors in malloc here
+    memcpy(result, s1, len1);
+    memcpy(result+len1, s2, len2+1);//+1 to copy the null-terminator
+    return result;
+}

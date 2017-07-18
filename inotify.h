@@ -25,10 +25,11 @@
 
 using namespace std;
 
-int getFileNameList();
+int audit_folder();
 template <class T> std::ostream& operator<< (std::ostream& os, const std::set<T>& v);
 void consume_files();
 void folder_listener(int inotify_instance);
+char* concat(const char *s1, const char *s2);
 
 static void displayInotifyEvent(struct inotify_event *i) {
     
