@@ -17,6 +17,8 @@
 #include <set>
 #include <sys/inotify.h>
 #include <sys/stat.h>
+#include <sys/select.h>
+#include <sys/time.h>
 
 
 using namespace std;
