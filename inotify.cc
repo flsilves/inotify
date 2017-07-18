@@ -16,8 +16,8 @@ int main(int argc, char *argv[]) {
 
     int inotify_fd, watch_descriptor;
 
-    if (argc < 2 || strcmp(argv[1], "--help") == 0) {
-        printf("%s pathname... \n", argv[0]);
+    if (argc != 2 || strcmp(argv[1], "--help") == 0) {
+        printf("USAGE: %s <pathname>\n", argv[0]);
         exit(1);
     }
 
