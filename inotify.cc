@@ -2,6 +2,8 @@
 
 #define BUF_LEN (10 * (sizeof(struct inotify_event) + NAME_MAX + 1))
 #define INOTIFY_EVENTS (IN_MOVED_FROM | IN_MOVED_TO | IN_CLOSE_WRITE)
+#define AUDIT_TIMEOUT 3.0
+#define SELECT_TIMEOUT 1
 
 using namespace std;
 
@@ -63,15 +65,14 @@ void folder_listener(int inotify_fd) {
         cout << timer.elapsedSeconds() << endl;
         cout << "Inotify listener: waiting for events" << endl;
         struct timeval timeout;
-        timeout.tv_sec = 1;     // Set timeout to 2.0 seconds
+        timeout.tv_sec = SELECT_TIMEOUT;     // Set timeout to 2.0 seconds
         timeout.tv_usec = 0;
         FD_ZERO(&rfds);
         FD_SET(inotify_fd, &rfds);        
 
         int retval = select(inotify_fd + 1, &rfds, NULL, NULL, &timeout); // After select() don't rely on &rfds and &timeout values.
         
-        if (retval)
-        {
+        if (retval) {
             num_read = read(inotify_fd, buf, BUF_LEN);
             if (num_read == 0) {
                 printf("FATAL: read() from inotify fd returned 0!");
@@ -96,17 +97,14 @@ void folder_listener(int inotify_fd) {
             
             }
         }
-        else if(retval == -1)
-        {
+        else if(retval == -1) {
             printf("Select error \n");
         }
-        else if(retval == 0)
-        {
+        else if(retval == 0) {
             printf("Read timeout \n");
         }
 
-        if(timer.elapsedSeconds() > 3.0)
-        {
+        if(timer.elapsedSeconds() > AUDIT_TIMEOUT) {
             audit_folder(path);
             timer.restart();
         }
@@ -117,9 +115,8 @@ void folder_listener(int inotify_fd) {
     }
 }
 
-void consume_files(){   
-    while(1)
-    {   
+void consume_files() {   
+    while(1) {   
         unique_lock<mutex> lk(cv_m);
         cout << "Consumer thread waiting... \n";
         cv.wait(lk, []{return file_list.size() !=0 ;});
@@ -127,25 +124,12 @@ void consume_files(){
         cout << "Consumer thread: backlog size " << file_list.size() << endl;
         auto it = file_list.begin();
 
-        while(it != file_list.end())
-        {
+        while(it != file_list.end()) {
             file_list.erase(it++);
             cout << "Consumer thread: Removed item from list" << endl;               
             usleep(1000000);
-       }
+        }
     }
-}
-
-
-template <class T> // Debug print for std::set<T>
-ostream& operator << (ostream& os, const set<T>& v) {
-    os << "SET: [";
-    for (typename set<T>::const_iterator ii = v.begin(); ii != v.end(); ++ii)
-    {
-        os << " " << *ii;
-    }
-    os << "]";
-    return os;
 }
 
 int audit_folder(const char* folder) {
@@ -181,8 +165,7 @@ int audit_folder(const char* folder) {
     }
 }
 
-char* concat(const char *s1, const char *s2)
-{
+char* concat(const char *s1, const char *s2) {
     const size_t len1 = strlen(s1);
     const size_t len2 = strlen(s2);
     char *result = (char*)malloc(len1+len2+1);//+1 for the zero-terminator
@@ -190,4 +173,16 @@ char* concat(const char *s1, const char *s2)
     memcpy(result, s1, len1);
     memcpy(result+len1, s2, len2+1);//+1 to copy the null-terminator
     return result;
+}
+
+
+template <class T> // Debug print for std::set<T>
+ostream& operator << (ostream& os, const set<T>& v) {
+    os << "SET: [";
+    for (typename set<T>::const_iterator ii = v.begin(); ii != v.end(); ++ii)
+    {
+        os << " " << *ii;
+    }
+    os << "]";
+    return os;
 }
