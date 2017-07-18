@@ -6,6 +6,7 @@
 #include <mutex>
 #include <iostream>
 #include <sys/inotify.h>
+#include <dirent.h> 
 #include <stdio.h> 
 #include <iostream>
 #include <limits.h> 
@@ -15,12 +16,13 @@
 #include <algorithm>
 #include <set>
 #include <sys/inotify.h>
+#include <sys/stat.h>
 
 
 using namespace std;
 
-void print_container();
-
+int getFileNameList();
+template <class T> std::ostream& operator<< (std::ostream& os, const std::set<T>& v);
 void consume_files();
 void folder_listener(int inotify_instance);
 

@@ -52,7 +52,7 @@ void folder_listener(int inotify_instance) {
     char buf[BUF_LEN];
     char *buffer_pointer;
     struct inotify_event *event;
-    
+    getFileNameList();
 
     while(1) {
 
@@ -74,18 +74,15 @@ void folder_listener(int inotify_instance) {
         printf("Inotify listener: Read %ld bytes from inotify fd\n", (long) num_read);
 
         for (buffer_pointer = buf; buffer_pointer < buf + num_read;   ) {
-            event = (struct inotify_event *) buffer_pointer;
-
-
-            file_list.insert(event->name);
-    
-
             
+            event = (struct inotify_event *) buffer_pointer;
+            file_list.insert(event->name);            
             buffer_pointer += sizeof (struct inotify_event) +event->len;
+        
         }
         printf("Inotify listener: notifying\n");
         cv.notify_one();
-        print_container();
+        cout << file_list << endl;
     }
 }
 
@@ -109,12 +106,45 @@ void consume_files(){
 }
 
 
-void print_container() { //TODO: override <operator
-    auto it = file_list.begin();  
-
-    cout << "LIST: [";
-    while(it != file_list.end())
-        cout << ' ' << *it++;
-    
-    cout << "]" << endl;
+template <class T> 
+ostream& operator << (ostream& os, const set<T>& v) {
+    os << "[";
+    for (typename set<T>::const_iterator ii = v.begin(); ii != v.end(); ++ii)
+    {
+        os << " " << *ii;
+    }
+    os << "]";
+    return os;
 }
+
+int getFileNameList() {
+
+    DIR *dir = 0;
+    struct dirent *ent = 0;
+    struct stat statbuf;
+
+    const char* path = "/home/frs/inotify";
+
+    if ( (dir = opendir (path)) != NULL) {   
+        while ((ent = readdir (dir)) != NULL) {
+
+           if( ent->d_name[0] == '.') { // ignore all files that start with '.' 
+               continue;
+           }
+
+           if(stat(ent->d_name, &statbuf) == -1) {
+               return errno;
+           }
+
+           if(S_ISREG(statbuf.st_mode)) {
+               printf ("%s\n", ent->d_name);
+           }
+
+        }
+        
+        closedir (dir);       
+    } else {            
+        return EXIT_FAILURE;
+    }
+}
+
