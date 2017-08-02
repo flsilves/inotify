@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
         watch_descriptor = inotify_add_watch(inotify_fd, argv[j], INOTIFY_EVENTS);
         
         if (watch_descriptor == -1) {
-            printf("FATAL: inotify_add_watch: - errno%s\n", strerror(errno));
+            printf("FATAL: inotify_add_watch: - errno:%s\n", strerror(errno));
             exit(EXIT_FAILURE);
         }
         
@@ -79,12 +79,12 @@ void folder_listener(int inotify_fd) {
 
             num_read = read(inotify_fd, buf, BUF_LEN);
             if (num_read == 0) {
-                printf("FATAL: read() from inotify fd returned 0!");
+                printf("FATAL: read() from inotify fd returned 0! - errno:%d\n", strerror(errno));
                 exit(EXIT_FAILURE);
             }
 
             if (num_read == -1) {
-                printf("FATAL: read rom inotify fd returned -1!");
+                printf("FATAL: read rom inotify fd returned -1! - errno:$d\n", strerror(errno));
                 exit(EXIT_FAILURE);
             }
             
@@ -153,6 +153,7 @@ int audit_folder(const char* folder) {
 
            char* file = concat(folder, ent->d_name);
            if(stat(file, &statbuf) == -1) { // perform stat on file
+               printf("stat error - errno:%d\n", strerror(errno));
                return errno;
            }
 
@@ -166,6 +167,7 @@ int audit_folder(const char* folder) {
         closedir (dir);      
 
     } else {            
+        printf("opendir error - errno%d\n", strerror(errno));
         return EXIT_FAILURE;
     }
 }
