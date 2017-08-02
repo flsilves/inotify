@@ -24,7 +24,8 @@ int main(int argc, char *argv[]) {
     inotify_fd = inotify_init(); /* Create inotify instance */
 
     if (inotify_fd == -1) {
-        printf("FATAL: inotify_init");
+        printf("FATAL: inotify_init - errno:%s\n", strerror(errno));
+
         exit(EXIT_FAILURE);
     }
 
@@ -32,7 +33,7 @@ int main(int argc, char *argv[]) {
         watch_descriptor = inotify_add_watch(inotify_fd, argv[j], INOTIFY_EVENTS);
         
         if (watch_descriptor == -1) {
-            printf("FATAL: inotify_add_watch");
+            printf("FATAL: inotify_add_watch: - errno%s\n", strerror(errno));
             exit(EXIT_FAILURE);
         }
         
