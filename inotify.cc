@@ -152,7 +152,7 @@ int audit_folder(const char* folder) {
            }
 
            char* file = concat(folder, ent->d_name);
-           if(stat(file, &statbuf) == -1) { // perform stat on file
+           if(stat(file, &statbuf) == -1) { 
                printf("stat error - errno:%d\n", strerror(errno));
                return errno;
            }
@@ -183,13 +183,13 @@ char* concat(const char *s1, const char *s2) {
     return result;
 }
 
-template <class T> // Debug print for std::set<T>
+template <typename T> // Debug print for std::set<T>
 ostream& operator << (ostream& os, const set<T>& v) {
 
     os << "SET: [";
-    for (typename set<T>::const_iterator ii = v.begin(); ii != v.end(); ++ii)
+    for (typename set<T>::const_iterator it = v.begin(); it != v.end(); ++it)
     {
-        os << " " << *ii;
+        os << " " << *it << ","; 
     }
     os << "]";
     return os;
