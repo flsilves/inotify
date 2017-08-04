@@ -14,13 +14,50 @@ condition_variable cv;
 
 int main(int argc, char *argv[]) { 
 
-    int inotify_fd, watch_descriptor;
+    int inotify_fd, number_of_threads;
+    char folder_path[PATH_MAX];
 
-    if (argc != 2 || strcmp(argv[1], "--help") == 0) {
-        printf("USAGE: %s <pathname>\n", argv[0]);
+    read_arguments(argc, argv, number_of_threads, folder_path);
+    printf("%s\n", folder_path);
+    create_inotify_instances(argc, argv, inotify_fd);
+
+    thread thread1(folder_listener, inotify_fd);
+    thread thread2(consume_files);
+
+    thread1.join();
+    thread2.join();
+
+    exit(EXIT_SUCCESS);
+}
+
+void read_arguments(const int &argc, char *argv[], int &number_of_threads, char *folder_path) {
+
+    struct stat statbuf; 
+
+    if (argc != 3 || strcmp(argv[1], "--help") == 0) {
+        printf("USAGE: %s <pathname> <#threads>\n", argv[0]);
         exit(1);
     }
+    
+    realpath(argv[1], folder_path);
+    printf("%s\n", folder_path);
 
+    if(stat(folder_path, &statbuf) == -1) { 
+        printf("stat error - errno:%d\n", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+
+    if(!(S_ISREG(statbuf.st_mode) && S_ISDIR(statbuf.st_mode)))
+    {      
+        printf("Argument is not a valid folder path:\n");
+        exit(EXIT_FAILURE);
+    }
+    return;
+}
+
+void create_inotify_instances(const int &argc, char *argv[], int &inotify_fd) {
+    
+    int watch_descriptor;
     inotify_fd = inotify_init(); /* Create inotify instance */
 
     if (inotify_fd == -1) {
@@ -39,14 +76,24 @@ int main(int argc, char *argv[]) {
         
         printf("Watching %s using watch_descriptor %d\n", argv[j], watch_descriptor);
     }
+}
 
-    thread thread1(folder_listener, inotify_fd);
-    thread thread2(consume_files);
+int folder_exists(char *absolute_path)
+{
+    struct stat statbuf; 
 
-    thread1.join();
-    thread2.join();
+    if(stat(absolute_path, &statbuf) == -1) { 
+       printf("stat error - errno:%d\n", strerror(errno));
+       return 1;
+    }
 
-    exit(EXIT_SUCCESS);
+    if(S_ISREG(statbuf.st_mode) && S_ISDIR(statbuf.st_mode) ) { // check if file isn't a directory and has right permissions
+       return 1;
+    }
+    else {
+        return 0;
+    }
+
 }
 
 void folder_listener(int inotify_fd) {

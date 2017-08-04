@@ -1,6 +1,10 @@
 #ifndef INOTIFY_H
 #define INOTIFY_H
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <linux/limits.h>
+
 #include <condition_variable>
 #include <thread>
 #include <mutex>
@@ -28,6 +32,8 @@ void consume_files();
 void folder_listener(int inotify_instance);
 char* concat(const char *s1, const char *s2);
 template <class T> std::ostream& operator<< (std::ostream& os, const std::set<T>& v);
+void create_inotify_instances(const int &argc, char *argv[], int &inotify_fd);
+void read_arguments(const int &argc, char *argv[], int &number_of_threads, char *folder_path);
 
 static void displayInotifyEvent(struct inotify_event *i) {
     

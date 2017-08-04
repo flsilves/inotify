@@ -1,4 +1,4 @@
-CC=g++ 
+CC=g++  
 CFLAGS=-ggdb -I. 
 DEPS = inotify.h 
 OBJ = inotify.o
