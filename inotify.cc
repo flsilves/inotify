@@ -60,6 +60,8 @@ void read_arguments(const int &argc, const char *argv[], int &number_of_threads,
     if(argc == 3) {
         number_of_threads = atoi(argv[2]);
     }
+
+    strcat(folder_path, "/");
 }
 
 void create_inotify_instances(const char* watch_path, int &inotify_fd) {
@@ -68,14 +70,14 @@ void create_inotify_instances(const char* watch_path, int &inotify_fd) {
     inotify_fd = inotify_init(); /* Create inotify instance */
 
     if (inotify_fd < 0) {
-        perror("ERROR: create_inotify_instances -> inotify_init()");
+        perror("ERROR: create_inotify_instances -> inotify_init() ");
         exit(EXIT_FAILURE);
     }
 
     watch_descriptor = inotify_add_watch(inotify_fd, watch_path, INOTIFY_EVENTS);
     
     if (watch_descriptor < 0) {
-        fprintf(stderr, "ERROR: create_inotify_instances -> inotify_add_watch(%d, %s, %d)", inotify_fd, watch_path, INOTIFY_EVENTS); perror("");
+        fprintf(stderr, "ERROR: create_inotify_instances -> inotify_add_watch(%d, %s, %d) ", inotify_fd, watch_path, INOTIFY_EVENTS); perror("");
         exit(EXIT_FAILURE);
     }
     
@@ -112,7 +114,7 @@ void folder_listener(const int inotify_fd, const char *folder_path) {
 
             num_read = read(inotify_fd, buf, BUF_LEN);
             if (num_read < 0) {
-                perror("ERROR: folder_listener -> read()");
+                perror("ERROR: folder_listener -> read() ");
                 exit(EXIT_FAILURE);
             }
            
@@ -144,7 +146,7 @@ void folder_listener(const int inotify_fd, const char *folder_path) {
 
         debug("Inotify listener: notifying\n");
         cv.notify_one();
-        cout << file_list << endl;
+        //cout << file_list << endl;
     }
 }
 
@@ -166,11 +168,11 @@ void consume_files() {   // delete files
             strcpy(filename, s.c_str());
             if(remove(filename) != 0)
             {
-                fprintf(stderr, "ERROR: consume_files -> remove(%s)", filename); perror("");          
+                fprintf(stderr, "ERROR: consume_files -> remove(%s) ", filename); perror("");          
             }
             else
             {   
-                debug("Deleted file [%s]\n", filename);
+                //debug("Deleted file [%s]\n", filename);
                 file_list.erase(it++); // concurrency issues with producer thread ??
             }
                       
@@ -194,22 +196,22 @@ int audit_folder(const char* folder) {
            }
 
            char* file = concat(folder, ent->d_name);
-           if(stat(file, &statbuf) < 0) {              
-               fprintf(stderr, "ERROR: audit folder -> stat(%s)", file); perror("");
+           if(stat(file, &statbuf) != 0) {              
+               fprintf(stderr, "ERROR: audit folder -> stat(%s) ", file); perror("");
                return errno;
            }
 
            free(file);
 
            if(S_ISREG(statbuf.st_mode)) { // check if file isn't a directory and has right permissions
-               file_list.insert(ent->d_name);
+               file_list.insert(string(folder) + "/" + ent->d_name); // TODO - 
            }
 
         }        
         closedir (dir);      
 
     } else {    
-        fprintf(stderr, "ERROR - audit_folder -> opendir(%s)", folder ); perror("");     
+        fprintf(stderr, "ERROR - audit_folder -> opendir(%s) ", folder ); perror("");     
         return EXIT_FAILURE;
     }
 }

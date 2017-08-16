@@ -1,9 +1,15 @@
 #!/usr/bin/bash
 
-rm ./watch/*
-i=0
+NUMBER_OF_FILES=100000
+SCRIPT=$(realpath $0)
+SCRIPT_PATH=$(dirname ${SCRIPT})
+WATCH_FOLDER=${SCRIPT_PATH}/watch
 
-echo "File count:"
+echo "creating ${NUMBER_OF_FILES} test files on ${WATCH_FOLDER}"
 
+rm ${WATCH_FOLDER}/*
 
-printf '%s ' {1..1391803} | xargs touch
+dd if=/dev/zero of=${WATCH_FOLDER}/masterfile bs=1 count=${NUMBER_OF_FILES}
+split -b 1 ${WATCH_FOLDER}/masterfile ${WATCH_FOLDER}/split_
+
+rm 
