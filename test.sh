@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-NUMBER_OF_FILES=100000
+NUMBER_OF_FILES=1000000
 SCRIPT=$(realpath $0)
 SCRIPT_PATH=$(dirname ${SCRIPT})
 WATCH_FOLDER=${SCRIPT_PATH}/watch
