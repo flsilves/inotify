@@ -12,4 +12,4 @@ rm ${WATCH_FOLDER}/*
 dd if=/dev/zero of=${WATCH_FOLDER}/masterfile bs=1 count=${NUMBER_OF_FILES}
 split -b 1 ${WATCH_FOLDER}/masterfile ${WATCH_FOLDER}/split_
 
-rm 
+rm ${WATCH_FOLDER}/masterfile
