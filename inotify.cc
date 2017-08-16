@@ -5,7 +5,7 @@
 
 
 #define AUDIT_TIMEOUT 3.0
-#define SELECT_TIMEOUT 1
+#define SELECT_TIMEOUT 3.0
 
 using namespace std;
 
@@ -24,6 +24,7 @@ int main(const int argc, const char *argv[]) {
     debug("input arguments: PATH:[%s]  NUMBER_OF_THREADS:[%d]\n", folder_path, number_of_threads);
 
     create_inotify_instances(folder_path, inotify_fd);
+
 
     thread thread1(folder_listener, inotify_fd, folder_path);
     thread thread2(consume_files);
@@ -66,15 +67,15 @@ void create_inotify_instances(const char* watch_path, int &inotify_fd) {
     int watch_descriptor;
     inotify_fd = inotify_init(); /* Create inotify instance */
 
-    if (inotify_fd == -1) {
-        printf("FATAL: inotify_init - errno:%s\n", strerror(errno));
+    if (inotify_fd < 0) {
+        perror("ERROR: create_inotify_instances -> inotify_init()");
         exit(EXIT_FAILURE);
     }
 
     watch_descriptor = inotify_add_watch(inotify_fd, watch_path, INOTIFY_EVENTS);
     
-    if (watch_descriptor == -1) {
-        printf("FATAL: inotify_add_watch: - errno:%s\n", strerror(errno));
+    if (watch_descriptor < 0) {
+        perror("ERROR: create_inotify_instances -> inotify_add_watch()");
         exit(EXIT_FAILURE);
     }
     
@@ -110,25 +111,20 @@ void folder_listener(const int inotify_fd, const char *folder_path) {
         if (retval) {
 
             num_read = read(inotify_fd, buf, BUF_LEN);
-            if (num_read == 0) {
-                printf("FATAL: read() from inotify fd returned 0! - errno:%d\n", strerror(errno));
+            if (num_read < 0) {
+                perror("ERROR: folder_listener -> read()");
                 exit(EXIT_FAILURE);
             }
-
-            if (num_read == -1) {
-                printf("FATAL: read rom inotify fd returned -1! - errno:$d\n", strerror(errno));
-                exit(EXIT_FAILURE);
-            }
-            
+           
             debug("Inotify listener: Aquiring lock\n");
             unique_lock<mutex> lk(cv_m);
 
             debug("Inotify listener: Read %ld bytes from inotify fd\n", (long) num_read);
 
-            for (buffer_pointer = buf; buffer_pointer < buf + num_read;   ) {
-                
+            for (buffer_pointer = buf; buffer_pointer < buf + num_read;   ) {               
                 event = (struct inotify_event *) buffer_pointer;
-                file_list.insert(event->name);            
+                debug("Inotify event: File name[%s] watch_descriptor[%d] \n", event->name, event->wd);
+                file_list.insert( string(folder_path) + "/" + event->name);            
                 buffer_pointer += sizeof (struct inotify_event) +event->len;
             
             }
@@ -151,7 +147,7 @@ void folder_listener(const int inotify_fd, const char *folder_path) {
     }
 }
 
-void consume_files() {   
+void consume_files() {   // delete files 
 
     while(1) {   
         unique_lock<mutex> lk(cv_m); 
@@ -163,8 +159,21 @@ void consume_files() {
         auto it = file_list.begin();
 
         while(it != file_list.end()) {
-            file_list.erase(it++); // concurrency issues with producer thread ??
-            debug("Consumer thread: Removed item from list\n");               
+
+            std::string s = *it;
+            char* filename = new char[s.length() + 1];
+            strcpy(filename, s.c_str());
+            if(remove(filename) != 0)
+            {
+                perror("ERROR: consume_files -> remove()");                
+            }
+            else
+            {   
+                debug("Deleted file [%s]\n", filename);
+                file_list.erase(it++); // concurrency issues with producer thread ??
+                //debug("Consumer thread: Removed item from list\n");   
+            }
+                      
             usleep(1000000);
         }
     }
@@ -185,8 +194,8 @@ int audit_folder(const char* folder) {
            }
 
            char* file = concat(folder, ent->d_name);
-           if(stat(file, &statbuf) == -1) { 
-               printf("stat error - errno:%d\n", strerror(errno));
+           if(stat(file, &statbuf) < 0) {
+               perror("ERROR: audit_folder -> stat()");
                return errno;
            }
 
@@ -199,8 +208,8 @@ int audit_folder(const char* folder) {
         }        
         closedir (dir);      
 
-    } else {            
-        printf("opendir error - errno%d\n", strerror(errno));
+    } else {    
+        perror("ERROR - audit_folder -> opendir()");        
         return EXIT_FAILURE;
     }
 }
