@@ -35,7 +35,6 @@ void read_arguments(const int &argc, const char *argv[], int &number_of_threads,
 int audit_folder(const char *folder);
 void debug(const char *format, ...);
 
-//Worker Threads
 void consume_files();
 void folder_listener(const int inotify_fd, const char *folder_path);
 
@@ -74,7 +73,6 @@ static void displayInotifyEvent(struct inotify_event *i) {
         printf(" name = %s\n", i->name);
     }
 }
-
 
 
 #endif /* INOTIFY_H */

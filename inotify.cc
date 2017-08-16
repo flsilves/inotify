@@ -75,7 +75,7 @@ void create_inotify_instances(const char* watch_path, int &inotify_fd) {
     watch_descriptor = inotify_add_watch(inotify_fd, watch_path, INOTIFY_EVENTS);
     
     if (watch_descriptor < 0) {
-        perror("ERROR: create_inotify_instances -> inotify_add_watch()");
+        fprintf(stderr, "ERROR: create_inotify_instances -> inotify_add_watch(%d, %s, %d)", inotify_fd, watch_path, INOTIFY_EVENTS); perror("");
         exit(EXIT_FAILURE);
     }
     
@@ -137,6 +137,7 @@ void folder_listener(const int inotify_fd, const char *folder_path) {
         }
 
         if(timer.elapsedSeconds() > AUDIT_TIMEOUT) {
+            debug("Auditing Folder: %s\n", folder_path);
             audit_folder(folder_path);
             timer.restart();
         }
@@ -160,21 +161,20 @@ void consume_files() {   // delete files
 
         while(it != file_list.end()) {
 
-            std::string s = *it;
+            string s = *it;
             char* filename = new char[s.length() + 1];
             strcpy(filename, s.c_str());
             if(remove(filename) != 0)
             {
-                perror("ERROR: consume_files -> remove()");                
+                fprintf(stderr, "ERROR: consume_files -> remove(%s)", filename); perror("");          
             }
             else
             {   
                 debug("Deleted file [%s]\n", filename);
                 file_list.erase(it++); // concurrency issues with producer thread ??
-                //debug("Consumer thread: Removed item from list\n");   
             }
                       
-            usleep(1000000);
+            //usleep(1000000);
         }
     }
 }
@@ -194,8 +194,8 @@ int audit_folder(const char* folder) {
            }
 
            char* file = concat(folder, ent->d_name);
-           if(stat(file, &statbuf) < 0) {
-               perror("ERROR: audit_folder -> stat()");
+           if(stat(file, &statbuf) < 0) {              
+               fprintf(stderr, "ERROR: audit folder -> stat(%s)", file); perror("");
                return errno;
            }
 
@@ -209,7 +209,7 @@ int audit_folder(const char* folder) {
         closedir (dir);      
 
     } else {    
-        perror("ERROR - audit_folder -> opendir()");        
+        fprintf(stderr, "ERROR - audit_folder -> opendir(%s)", folder ); perror("");     
         return EXIT_FAILURE;
     }
 }
@@ -225,7 +225,7 @@ char* concat(const char *s1, const char *s2) {
     return result;
 }
 
-template <typename T> // Debug print for std::set<T>
+template <typename T> // Debug print for set<T>
 ostream& operator << (ostream& os, const set<T>& v) {
 
     os << "** DEBUG **    SET: [";
