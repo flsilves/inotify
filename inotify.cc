@@ -2,26 +2,30 @@
 
 #define BUF_LEN (10 * (sizeof(struct inotify_event) + NAME_MAX + 1))
 #define INOTIFY_EVENTS (IN_MOVED_FROM | IN_MOVED_TO | IN_CLOSE_WRITE)
+
+
 #define AUDIT_TIMEOUT 3.0
 #define SELECT_TIMEOUT 1
 
 using namespace std;
 
-const char* path = "/home/frs/inotify/watch/";
+int enable_debug = 1;
+
 set<string> file_list;
 mutex cv_m;
 condition_variable cv;
 
-int main(int argc, char *argv[]) { 
+int main(const int argc, const char *argv[]) { 
 
-    int inotify_fd, number_of_threads;
+    int inotify_fd, number_of_threads = 100;
     char folder_path[PATH_MAX];
 
     read_arguments(argc, argv, number_of_threads, folder_path);
-    printf("%s\n", folder_path);
-    create_inotify_instances(argc, argv, inotify_fd);
+    debug("input arguments: PATH:[%s]  NUMBER_OF_THREADS:[%d]\n", folder_path, number_of_threads);
 
-    thread thread1(folder_listener, inotify_fd);
+    create_inotify_instances(folder_path, inotify_fd);
+
+    thread thread1(folder_listener, inotify_fd, folder_path);
     thread thread2(consume_files);
 
     thread1.join();
@@ -30,73 +34,55 @@ int main(int argc, char *argv[]) {
     exit(EXIT_SUCCESS);
 }
 
-void read_arguments(const int &argc, char *argv[], int &number_of_threads, char *folder_path) {
+void read_arguments(const int &argc, const char *argv[], int &number_of_threads, char *folder_path) {
 
     struct stat statbuf; 
+    number_of_threads = 2; // default number of threads
 
-    if (argc != 3 || strcmp(argv[1], "--help") == 0) {
+    if ( argc <=1 || argc >=4 || strcmp(argv[1], "--help") == 0) {
         printf("USAGE: %s <pathname> <#threads>\n", argv[0]);
         exit(1);
     }
-    
     realpath(argv[1], folder_path);
-    printf("%s\n", folder_path);
+    debug("Validating folder: %s\n", folder_path);
 
     if(stat(folder_path, &statbuf) == -1) { 
-        printf("stat error - errno:%d\n", strerror(errno));
-        exit(EXIT_FAILURE);
-    }
-
-    if(!(S_ISREG(statbuf.st_mode) && S_ISDIR(statbuf.st_mode)))
-    {      
         printf("Argument is not a valid folder path:\n");
         exit(EXIT_FAILURE);
     }
-    return;
+
+    if(!S_ISDIR(statbuf.st_mode)) {      
+        printf("Argument is not a valid folder path:\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if(argc == 3) {
+        number_of_threads = atoi(argv[2]);
+    }
 }
 
-void create_inotify_instances(const int &argc, char *argv[], int &inotify_fd) {
+void create_inotify_instances(const char* watch_path, int &inotify_fd) {
     
     int watch_descriptor;
     inotify_fd = inotify_init(); /* Create inotify instance */
 
     if (inotify_fd == -1) {
         printf("FATAL: inotify_init - errno:%s\n", strerror(errno));
-
         exit(EXIT_FAILURE);
     }
 
-    for (int j = 1; j < argc; j++) {
-        watch_descriptor = inotify_add_watch(inotify_fd, argv[j], INOTIFY_EVENTS);
-        
-        if (watch_descriptor == -1) {
-            printf("FATAL: inotify_add_watch: - errno:%s\n", strerror(errno));
-            exit(EXIT_FAILURE);
-        }
-        
-        printf("Watching %s using watch_descriptor %d\n", argv[j], watch_descriptor);
+    watch_descriptor = inotify_add_watch(inotify_fd, watch_path, INOTIFY_EVENTS);
+    
+    if (watch_descriptor == -1) {
+        printf("FATAL: inotify_add_watch: - errno:%s\n", strerror(errno));
+        exit(EXIT_FAILURE);
     }
+    
+    debug("Watching %s using watch_descriptor %d\n", watch_path, watch_descriptor);    
 }
 
-int folder_exists(char *absolute_path)
-{
-    struct stat statbuf; 
 
-    if(stat(absolute_path, &statbuf) == -1) { 
-       printf("stat error - errno:%d\n", strerror(errno));
-       return 1;
-    }
-
-    if(S_ISREG(statbuf.st_mode) && S_ISDIR(statbuf.st_mode) ) { // check if file isn't a directory and has right permissions
-       return 1;
-    }
-    else {
-        return 0;
-    }
-
-}
-
-void folder_listener(int inotify_fd) {
+void folder_listener(const int inotify_fd, const char *folder_path) {
 
     Timer timer;
     timer.start();
@@ -113,9 +99,8 @@ void folder_listener(int inotify_fd) {
         timeout.tv_sec = SELECT_TIMEOUT; // Set timeout to 2.0 seconds
         timeout.tv_usec = 0;
      
-        cout << "Timer: " << endl;
-        cout << timer.elapsedSeconds() << endl;
-        cout << "Inotify listener: waiting for events" << endl;
+        debug("Timer: %f \n", timer.elapsedSeconds());
+        debug("Inotify listener: waiting for events\n");
 
         FD_ZERO(&rfds);
         FD_SET(inotify_fd, &rfds);  
@@ -135,10 +120,10 @@ void folder_listener(int inotify_fd) {
                 exit(EXIT_FAILURE);
             }
             
-            printf("Inotify listener: Aquiring lock\n");
+            debug("Inotify listener: Aquiring lock\n");
             unique_lock<mutex> lk(cv_m);
 
-            printf("Inotify listener: Read %ld bytes from inotify fd\n", (long) num_read);
+            debug("Inotify listener: Read %ld bytes from inotify fd\n", (long) num_read);
 
             for (buffer_pointer = buf; buffer_pointer < buf + num_read;   ) {
                 
@@ -149,18 +134,18 @@ void folder_listener(int inotify_fd) {
             }
         }
         else if(retval == -1) {
-            printf("Select error \n");
+            debug("Select error \n");
         }
         else if(retval == 0) {
-            printf("Read timeout \n");
+            debug("Read timeout \n");
         }
 
         if(timer.elapsedSeconds() > AUDIT_TIMEOUT) {
-            audit_folder(path);
+            audit_folder(folder_path);
             timer.restart();
         }
 
-        printf("Inotify listener: notifying\n");
+        debug("Inotify listener: notifying\n");
         cv.notify_one();
         cout << file_list << endl;
     }
@@ -169,16 +154,17 @@ void folder_listener(int inotify_fd) {
 void consume_files() {   
 
     while(1) {   
-        unique_lock<mutex> lk(cv_m);
-        cout << "Consumer thread waiting... \n";
-        cv.wait(lk, []{return file_list.size() !=0 ;});
+        unique_lock<mutex> lk(cv_m); 
+        debug("Consumer thread waiting... \n");
 
-        cout << "Consumer thread: backlog size " << file_list.size() << endl;
+        cv.wait(lk, []{return file_list.size() !=0 ;}); // is it needed cv.notify_one to process the files?? 
+
+        debug("Consumer thread: backlog size: %d\n",file_list.size());
         auto it = file_list.begin();
 
         while(it != file_list.end()) {
-            file_list.erase(it++);
-            cout << "Consumer thread: Removed item from list" << endl;               
+            file_list.erase(it++); // concurrency issues with producer thread ??
+            debug("Consumer thread: Removed item from list\n");               
             usleep(1000000);
         }
     }
@@ -233,7 +219,7 @@ char* concat(const char *s1, const char *s2) {
 template <typename T> // Debug print for std::set<T>
 ostream& operator << (ostream& os, const set<T>& v) {
 
-    os << "SET: [";
+    os << "** DEBUG **    SET: [";
     for (typename set<T>::const_iterator it = v.begin(); it != v.end(); ++it)
     {
         os << " " << *it << ","; 
@@ -241,3 +227,15 @@ ostream& operator << (ostream& os, const set<T>& v) {
     os << "]";
     return os;
 }
+
+void debug(const char *format, ...) {
+  va_list args;
+  va_start(args, format);
+
+  if(enable_debug) {
+    printf("** DEBUG **    ");
+    vprintf(format, args);
+  }
+  va_end(args);
+}
+

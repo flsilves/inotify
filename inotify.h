@@ -24,16 +24,25 @@
 #include <sys/select.h>
 #include <sys/time.h>
 #include "myTimer.h"
+#include <stdarg.h>  
 
 using namespace std;
 
+
+void read_arguments(const int &argc, const char *argv[], int &number_of_threads, char *folder_path);
+
+
 int audit_folder(const char *folder);
+void debug(const char *format, ...);
+
+//Worker Threads
 void consume_files();
-void folder_listener(int inotify_instance);
+void folder_listener(const int inotify_fd, const char *folder_path);
+
 char* concat(const char *s1, const char *s2);
 template <class T> std::ostream& operator<< (std::ostream& os, const std::set<T>& v);
-void create_inotify_instances(const int &argc, char *argv[], int &inotify_fd);
-void read_arguments(const int &argc, char *argv[], int &number_of_threads, char *folder_path);
+void create_inotify_instances(const char* watch_path, int &inotify_fd);
+
 
 static void displayInotifyEvent(struct inotify_event *i) {
     
@@ -65,6 +74,8 @@ static void displayInotifyEvent(struct inotify_event *i) {
         printf(" name = %s\n", i->name);
     }
 }
+
+
 
 #endif /* INOTIFY_H */
 
