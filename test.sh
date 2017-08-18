@@ -1,11 +1,12 @@
 #!/usr/bin/bash
 
-NUMBER_OF_FILES=100000
+NUMBER_OF_FILES=500000
 SCRIPT=$(realpath $0)
 SCRIPT_PATH=$(dirname ${SCRIPT})
 WATCH_FOLDER=${SCRIPT_PATH}/watch
 
 echo "creating ${NUMBER_OF_FILES} test files on ${WATCH_FOLDER}"
+
 
 rm ${WATCH_FOLDER}/*
 
