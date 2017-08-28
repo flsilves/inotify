@@ -1,3 +1,6 @@
+#ifndef TIMER_H
+#define TIMER_H
+
 #include <iostream>
 #include <chrono>
 #include <ctime>
@@ -67,3 +70,5 @@ int main()
     std::cout << "Milliseconds: " << timer.elapsedMilliseconds() << std::endl
     ;
 }*/
+
+#endif

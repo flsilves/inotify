@@ -1,8 +1,10 @@
 #include "inotify.h"
+#include "backlog.h"
 
 #define BUF_LEN (1000 * (sizeof(struct inotify_event) + NAME_MAX + 1)) // buffer actually matters 
 #define INOTIFY_EVENTS (IN_MOVED_FROM | IN_MOVED_TO | IN_CLOSE_WRITE)
-
+#include <future>         // std::async, std::future
+#include <chrono>
 
 int event_count = 0;
 
@@ -13,10 +15,8 @@ using namespace std;
 
 int enable_debug = 1;
 
-set<string> file_list;
-std::mutex mtx, cv_m;
+concurrent_vector file_list;
 
-condition_variable cv;
 
 int main(const int argc, const char *argv[]) { 
 
@@ -126,15 +126,14 @@ void folder_listener(const int inotify_fd, const char *folder_path) {
 
             debug("Inotify listener: Read %ld bytes from inotify fd\n", (long) num_read);
 
-            mtx.lock();
             for (buffer_pointer = buf; buffer_pointer < buf + num_read;   ) {               
                 event = (struct inotify_event *) buffer_pointer;
                 //debug("Inotify event: File name[%s] watch_descriptor[%d] \n", event->name, event->wd);
                 event_count++;
-                file_list.insert( string(folder_path) + "/" + event->name);            
+                file_list.insert( string(folder_path) + "/" + event->name);      
+     
                 buffer_pointer += sizeof (struct inotify_event) +event->len;           
             }
-            mtx.unlock();
 
         }
         else if(retval == -1) {
@@ -145,17 +144,12 @@ void folder_listener(const int inotify_fd, const char *folder_path) {
         }
 
         if(timer.elapsedSeconds() > AUDIT_TIMEOUT) {
-            std::unique_lock<std::mutex> lck(cv_m);
             debug("Auditing Folder: %s\n", folder_path);
             audit_folder(folder_path);
             timer.restart();
         }
 
-        debug("Event count=%d\n", event_count);
-        debug("Inotify listener: notifying\n");
-        std::unique_lock<std::mutex> lck(cv_m);
-        cv.notify_one();
-        
+
         //cout << file_list << endl;
     }
 }
@@ -164,39 +158,20 @@ void consume_files() {   // delete files
 
     while(1) {   
 
-
-
-
-
-
         debug("Consumer thread waiting... \n");
-        std::unique_lock<std::mutex> lck(cv_m);
-        while(file_list.size() == 0){
-            cv.wait(lck);
-        }      
 
-        debug("Consumer thread: backlog size: %d\n",file_list.size());
-        auto it = file_list.begin();
-
-        while(it != file_list.end()) {
-
-            string s = *it;
-            char* filename = new char[s.length() + 1];
-            strcpy(filename, s.c_str());
-            if(remove(filename) != 0)
-            {
-                fprintf(stderr, "ERROR: consume_files -> remove(%s) ", filename); perror("");
-                file_list.erase(it++);      
-            }
-            else
-            {   
-                //debug("Deleted file [%s]\n", filename);
-                file_list.erase(it++); // concurrency issues with producer thread ??
-            }
-                       
-            //usleep(1000000);
+        //debug("Consumer thread: backlog size: %d\n",file_list.size());
+        string s = file_list.pop_front();
+        char* filename = new char[s.length() + 1];
+        strcpy(filename, s.c_str());
+        if(remove(filename) != 0)
+        {
+            fprintf(stderr, "ERROR: consume_files -> remove(%s) ", filename); perror("");    
         }
+         
+            //usleep(1000000);
     }
+    
 }
 
 int audit_folder(const char* folder) {

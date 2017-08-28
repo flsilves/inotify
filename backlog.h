@@ -6,6 +6,7 @@
 #include <linux/limits.h>
 
 #include <condition_variable>
+#include <cassert>
 #include <thread>
 #include <mutex>
 #include <iostream>
@@ -18,43 +19,66 @@
 #include <unistd.h>
 #include <string.h>
 #include <algorithm>
-#include <set>
+#include <vector>
 #include <sys/inotify.h>
 #include <sys/stat.h>
 #include <sys/select.h>
 #include <sys/time.h>
 #include "myTimer.h"
 #include <stdarg.h>  
+#include <chrono>
+#include <condition_variable>
+#include <iostream>
+#include <mutex>
+#include <thread>
 
 using namespace std;
 
 
-template <typename T>
-class concurrent_set
+
+
+class concurrent_vector
 {
-private:
-    set::set<T> set_;
-    std::mutex mutex_;
+    std::condition_variable cv;
+    mutable std::mutex _mtx;
+    std::vector<string> _vec;
 
 public:
-    typedef typename std::set<T>::iterator iterator;
 
-    insert(const T& val) {
-        std::unique_lock<std::mutex> lock(mutex_);
-        return set_.insert(val);
-    }
-
-    size_type size() const {
-        std::unique_lock<std::mutex> lock(mutex_);
-        return set_.size();
-    }
-
-    size_type erase(const T& val)
+    string pop_back()
     {
-        std::unique_lock<std::mutex> lock(mutex_);
-        return set_.erase(val);
+        std::unique_lock<std::mutex> lk(_mtx);
+        while (_vec.empty()) {
+         cv.wait(lk);
+        }
+        assert(!_vec.empty());
+        string ret = _vec.back();
+        _vec.pop_back();
+        return ret;
     }
+
+    string pop_front()
+    {
+        std::unique_lock<std::mutex> lk(_mtx);
+        string ret;
+        while (_vec.empty()) {
+         cv.wait(lk);
+        }
+        assert(!_vec.empty());
+        ret = _vec.front();
+        _vec.front() = std::move(_vec.back());
+        _vec.pop_back();
+        return ret;
+    }
+
+    void insert(string value)
+    {
+        std::lock_guard<std::mutex> lk(_mtx);
+        _vec.insert(_vec.begin(), value);
+        cv.notify_one();
+    }
+
+
 
 };
-
 #endif
