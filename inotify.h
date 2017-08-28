@@ -50,7 +50,7 @@ static void displayInotifyEvent(struct inotify_event *i) {
         printf("cookie =%4d; ", i->cookie);
     }
 
-    printf("mask = ");
+    printf("mask = "); // use DELETE_SELF 
     if (i->mask & IN_ACCESS) printf("IN_ACCESS ");
     if (i->mask & IN_ATTRIB) printf("IN_ATTRIB ");
     if (i->mask & IN_CLOSE_NOWRITE) printf("IN_CLOSE_NOWRITE ");

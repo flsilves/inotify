@@ -15,7 +15,7 @@ using namespace std;
 
 int enable_debug = 1;
 
-concurrent_vector file_list;
+concurrent_set file_list;
 
 
 int main(const int argc, const char *argv[]) { 
@@ -88,7 +88,7 @@ void create_inotify_instances(const char* watch_path, int &inotify_fd) {
 }
 
 
-void folder_listener(const int inotify_fd, const char *folder_path) {
+void folder_listener(const int inotify_fd, const char *folder_path) { // TODO LOGIC to remove upon delete notification
 
     Timer timer;
     timer.start();
@@ -161,7 +161,7 @@ void consume_files() {   // delete files
         debug("Consumer thread waiting... \n");
 
         //debug("Consumer thread: backlog size: %d\n",file_list.size());
-        string s = file_list.pop_front();
+        string s = file_list.pop();
         char* filename = new char[s.length() + 1];
         strcpy(filename, s.c_str());
         if(remove(filename) != 0)
@@ -173,6 +173,8 @@ void consume_files() {   // delete files
     }
     
 }
+
+
 
 int audit_folder(const char* folder) {
 
