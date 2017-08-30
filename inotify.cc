@@ -7,6 +7,8 @@
 #define AUDIT_TIMEOUT 10.0
 #define SELECT_TIMEOUT 3.0
 
+/*TODO use string and if char* is needed use c_str() */
+
 using namespace std;
 
 // Global variables
@@ -84,7 +86,7 @@ void create_inotify_instances(const char* watch_path, int &inotify_fd) {
 }
 
 
-void folder_listener(const int inotify_fd, const char *folder_path) { // TODO LOGIC to remove upon delete notification
+void folder_listener(const int inotify_fd, const char *folder_path) {
 
     Timer timer;
     timer.start();
@@ -101,15 +103,15 @@ void folder_listener(const int inotify_fd, const char *folder_path) { // TODO LO
         timeout.tv_sec = SELECT_TIMEOUT; // Set timeout
         timeout.tv_usec = 0;
      
-        debug("Timer: %f \n", timer.elapsedSeconds());
-        debug("Inotify listener: waiting for events\n");
+        //debug("Timer: %f \n", timer.elapsedSeconds());
+        //debug("Inotify listener: waiting for events\n");
 
         FD_ZERO(&rfds);
         FD_SET(inotify_fd, &rfds);  
 
-        int retval = select(inotify_fd + 1, &rfds, NULL, NULL, &timeout); // After select() don't rely on &rfds and &timeout values.
+        int select_retval = select(inotify_fd + 1, &rfds, NULL, NULL, &timeout); // After select() don't rely on &rfds and &timeout values.
         
-        if (retval) {
+        if (select_retval) {
 
             num_read = read(inotify_fd, buf, BUF_LEN);
             if (num_read < 0) {
@@ -126,16 +128,16 @@ void folder_listener(const int inotify_fd, const char *folder_path) { // TODO LO
                 event = (struct inotify_event *) buffer_pointer;
                 //debug("Inotify event: File name[%s] watch_descriptor[%d] \n", event->name, event->wd);
                 event_count++;
-                file_list.push( string(folder_path) + "/" + event->name);      
-     
+                string file_path = string(folder_path) + "/" + event->name;
+                process_event(event, file_path);     
                 buffer_pointer += sizeof (struct inotify_event) +event->len;           
             }
 
         }
-        else if(retval == -1) {
+        else if(select_retval == -1) {
             debug("Select error \n");
         }
-        else if(retval == 0) {
+        else if(select_retval == 0) {
             debug("Read timeout \n");
         }
 
@@ -144,6 +146,16 @@ void folder_listener(const int inotify_fd, const char *folder_path) { // TODO LO
             audit_folder(folder_path);
             timer.restart();
         }
+    }
+}
+
+void process_event(struct inotify_event *event, string& file_path)
+{
+    if(event->mask & IN_DELETE) {
+        file_list.erase(file_path);
+    }
+    else if(event->mask & IN_CLOSE_WRITE) {
+        file_list.push(file_path);     
     }
 }
 

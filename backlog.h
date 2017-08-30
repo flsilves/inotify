@@ -35,11 +35,18 @@ public:
         while (_set.empty()) {
          cv.wait(lock);
         }
+        
         assert(!_set.empty());
         auto it = _set.begin();
         string ret = *it;
         _set.erase(it);
         return ret;
+    }
+
+    size_t erase(string value)
+    {
+        std::unique_lock<std::mutex> lock(_mtx);
+        return _set.erase(value);
     }
 
 

@@ -28,7 +28,7 @@ void consume_files();
 void folder_listener(const int inotify_fd, const char *folder_path);
 int audit_folder(const char *folder);
 char* concat(const char *s1, const char *s2);
-
+void process_event(struct inotify_event *event, string& folder_path);
 template <class T> std::ostream& operator<< (std::ostream& os, const std::set<T>& v);
 
 static void displayInotifyEvent(struct inotify_event *i) {
