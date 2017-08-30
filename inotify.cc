@@ -2,7 +2,7 @@
 #include "backlog.h"
 
 #define BUF_LEN (1000 * (sizeof(struct inotify_event) + NAME_MAX + 1))  // BUFFER for inotify reader
-#define INOTIFY_EVENTS (IN_MOVED_FROM | IN_MOVED_TO | IN_CLOSE_WRITE)   // Relevant inotify events to watch
+#define INOTIFY_EVENTS (IN_DELETE | IN_CLOSE_WRITE)   // Relevant inotify events to watch
 
 #define AUDIT_TIMEOUT 10.0
 #define SELECT_TIMEOUT 3.0
@@ -24,7 +24,6 @@ int main(const int argc, const char *argv[]) {
     debug("input arguments: PATH:[%s]  NUMBER_OF_THREADS:[%d]\n", folder_path, number_of_threads);
 
     create_inotify_instances(folder_path, inotify_fd);
-
 
     thread thread1(folder_listener, inotify_fd, folder_path);
     thread thread2(consume_files);
@@ -127,7 +126,7 @@ void folder_listener(const int inotify_fd, const char *folder_path) { // TODO LO
                 event = (struct inotify_event *) buffer_pointer;
                 //debug("Inotify event: File name[%s] watch_descriptor[%d] \n", event->name, event->wd);
                 event_count++;
-                file_list.insert( string(folder_path) + "/" + event->name);      
+                file_list.push( string(folder_path) + "/" + event->name);      
      
                 buffer_pointer += sizeof (struct inotify_event) +event->len;           
             }
@@ -189,7 +188,7 @@ int audit_folder(const char* folder) {
            free(file);
 
            if(S_ISREG(statbuf.st_mode)) { // check if file isn't a directory and has right permissions
-               file_list.insert(string(folder) + "/" + ent->d_name); 
+               file_list.push(string(folder) + "/" + ent->d_name); 
            }
 
         }        

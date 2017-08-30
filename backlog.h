@@ -43,7 +43,7 @@ public:
     }
 
 
-    void insert(string value)
+    void push(string value)
     {
         std::unique_lock<std::mutex> lock(_mtx); // RAII - Resource acquisition is initialization
         _set.insert(_set.begin(), value);
