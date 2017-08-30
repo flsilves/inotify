@@ -67,7 +67,6 @@ void read_arguments(const int &argc, const char *argv[], int &number_of_threads,
     }
 
     strcat(folder_path, "/");
-
 }
 
 void create_inotify_instances(string &watch_path, int &inotify_fd) {
@@ -187,7 +186,7 @@ int audit_folder(string &folder) {
     struct stat statbuf;  
 
     if ( (dir = opendir (folder.c_str())) != NULL) {   
-        
+
         while ((ent = readdir (dir)) != NULL) {
 
            if( ent->d_name[0] == '.') { // ignore all files that start with '.' 
