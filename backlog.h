@@ -51,4 +51,4 @@ public:
     }
 };
 
-#endif
+#endif // BACKLOG_H

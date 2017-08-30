@@ -6,7 +6,6 @@
 #include <ctime>
 #include <cmath>
 
-
 class Timer
 {
 
@@ -49,26 +48,4 @@ private:
     bool m_bRunning = false;
 };
 
-/*
-int main()
-{
-
-    Timer timer;
-    timer.start();
-    int counter = 0;
-    double test, test2;
-    while(timer.elapsedSeconds() < 10.0)
-    {
-        counter++;
-        test = std::cos(counter / M_PI);
-        test2 = std::sin(counter / M_PI);
-    }
-    timer.stop();
-    
-    std::cout << counter << std::endl;
-    std::cout << "Seconds: " << timer.elapsedSeconds() << std::endl;
-    std::cout << "Milliseconds: " << timer.elapsedMilliseconds() << std::endl
-    ;
-}*/
-
-#endif
+#endif //TIMER_H

@@ -62,5 +62,5 @@ static void displayInotifyEvent(struct inotify_event *i) {
     }
 }
 
-#endif
+#endif // INOTIFY_H
 
