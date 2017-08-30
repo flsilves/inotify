@@ -1,47 +1,35 @@
 #ifndef INOTIFY_H
 #define INOTIFY_H
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <linux/limits.h>
+#include "myTimer.h"
 
-#include <condition_variable>
+#include <iostream>
+#include <set>
 #include <thread>
 #include <mutex>
-#include <iostream>
-#include <sys/inotify.h>
+
 #include <dirent.h> 
-#include <stdio.h> 
-#include <iostream>
-#include <limits.h> 
-#include <thread>
-#include <unistd.h>
+#include <stdarg.h>  
 #include <string.h>
-#include <algorithm>
-#include <set>
+
 #include <sys/inotify.h>
 #include <sys/stat.h>
 #include <sys/select.h>
 #include <sys/time.h>
-#include "myTimer.h"
-#include <stdarg.h>  
 
 using namespace std;
 
-
 void read_arguments(const int &argc, const char *argv[], int &number_of_threads, char *folder_path);
 
-
-int audit_folder(const char *folder);
 void debug(const char *format, ...);
-
+void create_inotify_instances(const char* watch_path, int &inotify_fd);
+void delete_file(std::string &file_absolute_path);
 void consume_files();
 void folder_listener(const int inotify_fd, const char *folder_path);
-
+int audit_folder(const char *folder);
 char* concat(const char *s1, const char *s2);
-template <class T> std::ostream& operator<< (std::ostream& os, const std::set<T>& v);
-void create_inotify_instances(const char* watch_path, int &inotify_fd);
 
+template <class T> std::ostream& operator<< (std::ostream& os, const std::set<T>& v);
 
 static void displayInotifyEvent(struct inotify_event *i) {
     
@@ -50,7 +38,7 @@ static void displayInotifyEvent(struct inotify_event *i) {
         printf("cookie =%4d; ", i->cookie);
     }
 
-    printf("mask = "); // use DELETE_SELF 
+    printf("mask = "); // use DELETE_SELF, study IN_MOVED_TO
     if (i->mask & IN_ACCESS) printf("IN_ACCESS ");
     if (i->mask & IN_ATTRIB) printf("IN_ATTRIB ");
     if (i->mask & IN_CLOSE_NOWRITE) printf("IN_CLOSE_NOWRITE ");
@@ -74,6 +62,5 @@ static void displayInotifyEvent(struct inotify_event *i) {
     }
 }
 
-
-#endif /* INOTIFY_H */
+#endif
 

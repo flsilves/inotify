@@ -1,10 +1,8 @@
 #include "inotify.h"
 #include "backlog.h"
 
-#define BUF_LEN (1000 * (sizeof(struct inotify_event) + NAME_MAX + 1)) // buffer actually matters 
+#define BUF_LEN (1000 * (sizeof(struct inotify_event) + NAME_MAX + 1)) 
 #define INOTIFY_EVENTS (IN_MOVED_FROM | IN_MOVED_TO | IN_CLOSE_WRITE)
-#include <future>         // std::async, std::future
-#include <chrono>
 
 int event_count = 0;
 
@@ -13,7 +11,7 @@ int event_count = 0;
 
 using namespace std;
 
-int enable_debug = 1;
+bool enable_debug = true;
 
 concurrent_set file_list;
 
@@ -38,7 +36,7 @@ int main(const int argc, const char *argv[]) {
     exit(EXIT_SUCCESS);
 }
 
-void read_arguments(const int &argc, const char *argv[], int &number_of_threads, char *folder_path) {
+void read_arguments(const int &argc, const char *argv[], int &number_of_threads, char *folder_path) { // TODO - number_of_threads not used
 
     struct stat statbuf; 
     number_of_threads = 2; // default number of threads
@@ -99,10 +97,10 @@ void folder_listener(const int inotify_fd, const char *folder_path) { // TODO LO
     struct inotify_event *event;   
     fd_set rfds;
 
-    while(1) {
+    while(true) {
 
         struct timeval timeout;
-        timeout.tv_sec = SELECT_TIMEOUT; // Set timeout to 2.0 seconds
+        timeout.tv_sec = SELECT_TIMEOUT; // Set timeout
         timeout.tv_usec = 0;
      
         debug("Timer: %f \n", timer.elapsedSeconds());
@@ -148,40 +146,34 @@ void folder_listener(const int inotify_fd, const char *folder_path) { // TODO LO
             audit_folder(folder_path);
             timer.restart();
         }
-
-
-        //cout << file_list << endl;
     }
 }
 
-void consume_files() {   // delete files 
+void consume_files() {  
 
-    while(1) {   
-
-        debug("Consumer thread waiting... \n");
-
-        //debug("Consumer thread: backlog size: %d\n",file_list.size());
-        string s = file_list.pop();
-        char* filename = new char[s.length() + 1];
-        strcpy(filename, s.c_str());
-        if(remove(filename) != 0)
-        {
-            fprintf(stderr, "ERROR: consume_files -> remove(%s) ", filename); perror("");    
-        }
-         
-            //usleep(1000000);
+    while(true) {   
+        debug("Consumer thread - Retrieving File... \n");
+        string file_to_delete = file_list.pop();
+        delete_file(file_to_delete);        
     }
-    
+   
 }
 
+void delete_file(std::string &file_absolute_path)
+{
+   char* file_path = new char[file_absolute_path.length() + 1];
+   strcpy(file_path, file_absolute_path.c_str());
 
+   if(remove(file_path) != 0) {
+        fprintf(stderr, "ERROR: consume_files -> remove(%s) ", file_path); perror("");    
+   }
+}
 
 int audit_folder(const char* folder) {
 
     DIR *dir = 0;
     struct dirent *ent = 0;
     struct stat statbuf;  
-
 
     if ( (dir = opendir (folder)) != NULL) {   
         while ((ent = readdir (dir)) != NULL) {
@@ -199,7 +191,7 @@ int audit_folder(const char* folder) {
            free(file);
 
            if(S_ISREG(statbuf.st_mode)) { // check if file isn't a directory and has right permissions
-               file_list.insert(string(folder) + "/" + ent->d_name); // TODO - 
+               file_list.insert(string(folder) + "/" + ent->d_name); 
            }
 
         }        

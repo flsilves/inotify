@@ -1,36 +1,23 @@
 #ifndef BACKLOG_H
 #define BACKLOG_H
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <linux/limits.h>
+#include "myTimer.h"
 
-#include <condition_variable>
-#include <cassert>
+#include <iostream>
+
 #include <thread>
 #include <mutex>
-#include <iostream>
-#include <sys/inotify.h>
+#include <condition_variable>
+
 #include <dirent.h> 
-#include <stdio.h> 
-#include <iostream>
-#include <limits.h> 
-#include <thread>
-#include <unistd.h>
-#include <string.h>
-#include <algorithm>
-#include <vector>
+#include <stdarg.h>  
+#include <cassert>
+
 #include <sys/inotify.h>
 #include <sys/stat.h>
 #include <sys/select.h>
 #include <sys/time.h>
-#include "myTimer.h"
-#include <stdarg.h>  
-#include <chrono>
-#include <condition_variable>
-#include <iostream>
-#include <mutex>
-#include <thread>
+#include <unistd.h>
 
 using namespace std;
 
@@ -63,4 +50,5 @@ public:
         cv.notify_one();
     }
 };
+
 #endif
