@@ -1,20 +1,19 @@
 #include "inotify.h"
 #include "backlog.h"
 
-#define BUF_LEN (1000 * (sizeof(struct inotify_event) + NAME_MAX + 1)) 
-#define INOTIFY_EVENTS (IN_MOVED_FROM | IN_MOVED_TO | IN_CLOSE_WRITE)
-
-int event_count = 0;
+#define BUF_LEN (1000 * (sizeof(struct inotify_event) + NAME_MAX + 1))  // BUFFER for inotify reader
+#define INOTIFY_EVENTS (IN_MOVED_FROM | IN_MOVED_TO | IN_CLOSE_WRITE)   // Relevant inotify events to watch
 
 #define AUDIT_TIMEOUT 10.0
 #define SELECT_TIMEOUT 3.0
 
 using namespace std;
 
-bool enable_debug = true;
+// Global variables
+int event_count = 0;       // number of inotify events catched
+bool enable_debug = true;  // enable/disable debug
 
-concurrent_set file_list;
-
+concurrent_set file_list;  
 
 int main(const int argc, const char *argv[]) { 
 
@@ -156,7 +155,6 @@ void consume_files() {
         string file_to_delete = file_list.pop();
         delete_file(file_to_delete);        
     }
-   
 }
 
 void delete_file(std::string &file_absolute_path)
@@ -207,11 +205,15 @@ char* concat(const char *s1, const char *s2) {
 
     const size_t len1 = strlen(s1);
     const size_t len2 = strlen(s2);
-    char *result = (char*)malloc(len1+len2+1);//+1 for the zero-terminator
-    //in real code you would check for errors in malloc here
-    memcpy(result, s1, len1);
-    memcpy(result+len1, s2, len2+1);//+1 to copy the null-terminator
-    return result;
+    char *ptr = (char*)malloc(len1 + len2 + 1);// +1 for the zero-terminator
+
+    if(ptr == NULL) {
+        fprintf(stderr, "ERROR - concat() -> malloc()"); perror("");  
+    }
+
+    memcpy(ptr, s1, len1);
+    memcpy(ptr+len1, s2, len2 + 1);// +1 to copy the null-terminator
+    return ptr;
 }
 
 template <typename T> // Debug print for set<T>

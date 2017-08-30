@@ -31,9 +31,9 @@ public:
 
     string pop()
     {
-        std::unique_lock<std::mutex> lk(_mtx);
+        std::unique_lock<std::mutex> lock(_mtx); // RAII - Resource acquisition is initialization
         while (_set.empty()) {
-         cv.wait(lk);
+         cv.wait(lock);
         }
         assert(!_set.empty());
         auto it = _set.begin();
@@ -45,7 +45,7 @@ public:
 
     void insert(string value)
     {
-        std::unique_lock<std::mutex> lk(_mtx);
+        std::unique_lock<std::mutex> lock(_mtx); // RAII - Resource acquisition is initialization
         _set.insert(_set.begin(), value);
         cv.notify_one();
     }
