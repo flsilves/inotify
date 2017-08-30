@@ -3,6 +3,7 @@
 
 #include "myTimer.h"
 
+#include <stdlib.h>
 #include <iostream>
 #include <set>
 #include <thread>
@@ -22,12 +23,12 @@ using namespace std;
 void read_arguments(const int &argc, const char *argv[], int &number_of_threads, char *folder_path);
 
 void debug(const char *format, ...);
-void create_inotify_instances(const char* watch_path, int &inotify_fd);
-void delete_file(std::string &file_absolute_path);
+void create_inotify_instances(string &watch_path, int &inotify_fd);
+void delete_file(string &file_path);
 void consume_files();
-void folder_listener(const int inotify_fd, const char *folder_path);
-int audit_folder(const char *folder);
-char* concat(const char *s1, const char *s2);
+void folder_listener(const int inotify_fd, string folder_path);
+int audit_folder(string &folder);
+
 void process_event(struct inotify_event *event, string& folder_path);
 template <class T> std::ostream& operator<< (std::ostream& os, const std::set<T>& v);
 

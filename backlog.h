@@ -8,6 +8,7 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <stdlib.h>
 
 #include <dirent.h> 
 #include <stdarg.h>  
@@ -35,7 +36,7 @@ public:
         while (_set.empty()) {
          cv.wait(lock);
         }
-        
+
         assert(!_set.empty());
         auto it = _set.begin();
         string ret = *it;

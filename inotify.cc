@@ -19,12 +19,15 @@ concurrent_set file_list;
 
 int main(const int argc, const char *argv[]) { 
 
-    int inotify_fd, number_of_threads = 100;
-    char folder_path[PATH_MAX];
+    int inotify_fd;
+    int number_of_threads = 100;   
+    char folder_path_ch[PATH_MAX];
 
-    read_arguments(argc, argv, number_of_threads, folder_path);
-    debug("input arguments: PATH:[%s]  NUMBER_OF_THREADS:[%d]\n", folder_path, number_of_threads);
+    read_arguments(argc, argv, number_of_threads, folder_path_ch);
+    debug("input arguments: PATH:[%s]  NUMBER_OF_THREADS:[%d]\n", folder_path_ch, number_of_threads);  
 
+    string folder_path = string(folder_path_ch);
+    cout << folder_path << endl;
     create_inotify_instances(folder_path, inotify_fd);
 
     thread thread1(folder_listener, inotify_fd, folder_path);
@@ -45,6 +48,7 @@ void read_arguments(const int &argc, const char *argv[], int &number_of_threads,
         printf("USAGE: %s <pathname> <#threads>\n", argv[0]);
         exit(1);
     }
+
     realpath(argv[1], folder_path);
     debug("Validating folder: %s\n", folder_path);
 
@@ -63,9 +67,10 @@ void read_arguments(const int &argc, const char *argv[], int &number_of_threads,
     }
 
     strcat(folder_path, "/");
+
 }
 
-void create_inotify_instances(const char* watch_path, int &inotify_fd) {
+void create_inotify_instances(string &watch_path, int &inotify_fd) {
     
     int watch_descriptor;
     inotify_fd = inotify_init(); /* Create inotify instance */
@@ -75,18 +80,18 @@ void create_inotify_instances(const char* watch_path, int &inotify_fd) {
         exit(EXIT_FAILURE);
     }
 
-    watch_descriptor = inotify_add_watch(inotify_fd, watch_path, INOTIFY_EVENTS);
+    watch_descriptor = inotify_add_watch(inotify_fd, watch_path.c_str(), INOTIFY_EVENTS);
     
     if (watch_descriptor < 0) {
-        fprintf(stderr, "ERROR: create_inotify_instances -> inotify_add_watch(%d, %s, %d) ", inotify_fd, watch_path, INOTIFY_EVENTS); perror("");
+        fprintf(stderr, "ERROR: create_inotify_instances -> inotify_add_watch(%d, %s, %d) ", inotify_fd, watch_path.c_str(), INOTIFY_EVENTS); perror("");
         exit(EXIT_FAILURE);
     }
     
-    debug("Watching %s using watch_descriptor %d\n", watch_path, watch_descriptor);    
+    debug("Watching %s using watch_descriptor %d\n", watch_path.c_str(), watch_descriptor);    
 }
 
 
-void folder_listener(const int inotify_fd, const char *folder_path) {
+void folder_listener(const int inotify_fd, string folder_path) {
 
     Timer timer;
     timer.start();
@@ -128,9 +133,9 @@ void folder_listener(const int inotify_fd, const char *folder_path) {
                 event = (struct inotify_event *) buffer_pointer;
                 //debug("Inotify event: File name[%s] watch_descriptor[%d] \n", event->name, event->wd);
                 event_count++;
-                string file_path = string(folder_path) + "/" + event->name;
+                string file_path = folder_path + "/" + event->name;
                 process_event(event, file_path);     
-                buffer_pointer += sizeof (struct inotify_event) +event->len;           
+                buffer_pointer += sizeof (struct inotify_event) + event->len;           
             }
 
         }
@@ -142,7 +147,7 @@ void folder_listener(const int inotify_fd, const char *folder_path) {
         }
 
         if(timer.elapsedSeconds() > AUDIT_TIMEOUT) {
-            debug("Auditing Folder: %s\n", folder_path);
+            debug("Auditing Folder: %s\n", folder_path.c_str());
             audit_folder(folder_path);
             timer.restart();
         }
@@ -168,64 +173,48 @@ void consume_files() {
     }
 }
 
-void delete_file(std::string &file_absolute_path)
+void delete_file(string &file_path)
 {
-   char* file_path = new char[file_absolute_path.length() + 1];
-   strcpy(file_path, file_absolute_path.c_str());
-
-   if(remove(file_path) != 0) {
-        fprintf(stderr, "ERROR: consume_files -> remove(%s) ", file_path); perror("");    
+   if(remove(file_path.c_str()) != 0) {
+        fprintf(stderr, "ERROR: consume_files -> remove(%s) ", file_path.c_str()); perror("");    
    }
 }
 
-int audit_folder(const char* folder) {
+int audit_folder(string &folder) {
 
     DIR *dir = 0;
     struct dirent *ent = 0;
     struct stat statbuf;  
 
-    if ( (dir = opendir (folder)) != NULL) {   
+    if ( (dir = opendir (folder.c_str())) != NULL) {   
+        
         while ((ent = readdir (dir)) != NULL) {
 
            if( ent->d_name[0] == '.') { // ignore all files that start with '.' 
                continue;
            }
 
-           char* file = concat(folder, ent->d_name);
-           if(stat(file, &statbuf) != 0) {              
-               fprintf(stderr, "ERROR: audit folder -> stat(%s) ", file); perror("");
+           string file_path = folder + ent->d_name;
+       
+           if(stat(file_path.c_str(), &statbuf) != 0) {              
+               fprintf(stderr, "ERROR: audit folder -> stat(%s) ", file_path.c_str()); perror("");
                return errno;
            }
 
-           free(file);
-
            if(S_ISREG(statbuf.st_mode)) { // check if file isn't a directory and has right permissions
-               file_list.push(string(folder) + "/" + ent->d_name); 
+               file_list.push(file_path.c_str()); 
            }
 
         }        
         closedir (dir);      
 
     } else {    
-        fprintf(stderr, "ERROR - audit_folder -> opendir(%s) ", folder ); perror("");     
+        fprintf(stderr, "ERROR - audit_folder -> opendir(%s) ", folder.c_str() ); perror("");     
         return EXIT_FAILURE;
     }
 }
 
-char* concat(const char *s1, const char *s2) {
 
-    const size_t len1 = strlen(s1);
-    const size_t len2 = strlen(s2);
-    char *ptr = (char*)malloc(len1 + len2 + 1);// +1 for the zero-terminator
-
-    if(ptr == NULL) {
-        fprintf(stderr, "ERROR - concat() -> malloc()"); perror("");  
-    }
-
-    memcpy(ptr, s1, len1);
-    memcpy(ptr+len1, s2, len2 + 1);// +1 to copy the null-terminator
-    return ptr;
-}
 
 template <typename T> // Debug print for set<T>
 ostream& operator << (ostream& os, const set<T>& v) {
