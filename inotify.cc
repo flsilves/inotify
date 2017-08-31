@@ -7,8 +7,6 @@
 #define AUDIT_TIMEOUT 10.0
 #define SELECT_TIMEOUT 3.0
 
-/*TODO use string and if char* is needed use c_str() */
-
 using namespace std;
 
 // Global variables
