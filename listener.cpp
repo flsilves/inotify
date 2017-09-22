@@ -39,7 +39,7 @@ void Listener::readEvents() {
                               &timeout); // After select() don't rely on &selectReadDescriptor and &timeout values.
 
     if (selectRetval) {
-        ssize_t unprocessedEvents = read(inotifyFD, eventsBuffer, EVENTS_BUFFER_LENGTH);
+        unprocessedEvents = read(inotifyFD, eventsBuffer, EVENTS_BUFFER_LENGTH);
 
         if (unprocessedEvents < 0) {
             perror("ERROR: threadReaderLoop -> read() ");
