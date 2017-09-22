@@ -57,41 +57,93 @@ include CMakeFiles/inotify.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/inotify.dir/flags.make
 
-CMakeFiles/inotify.dir/inotify.cc.o: CMakeFiles/inotify.dir/flags.make
-CMakeFiles/inotify.dir/inotify.cc.o: ../inotify.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/frs/inotify/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/inotify.dir/inotify.cc.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/inotify.dir/inotify.cc.o -c /home/frs/inotify/inotify.cc
+CMakeFiles/inotify.dir/backlog.cpp.o: CMakeFiles/inotify.dir/flags.make
+CMakeFiles/inotify.dir/backlog.cpp.o: ../backlog.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/frs/inotify/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/inotify.dir/backlog.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/inotify.dir/backlog.cpp.o -c /home/frs/inotify/backlog.cpp
 
-CMakeFiles/inotify.dir/inotify.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/inotify.dir/inotify.cc.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/frs/inotify/inotify.cc > CMakeFiles/inotify.dir/inotify.cc.i
+CMakeFiles/inotify.dir/backlog.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/inotify.dir/backlog.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/frs/inotify/backlog.cpp > CMakeFiles/inotify.dir/backlog.cpp.i
 
-CMakeFiles/inotify.dir/inotify.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/inotify.dir/inotify.cc.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/frs/inotify/inotify.cc -o CMakeFiles/inotify.dir/inotify.cc.s
+CMakeFiles/inotify.dir/backlog.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/inotify.dir/backlog.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/frs/inotify/backlog.cpp -o CMakeFiles/inotify.dir/backlog.cpp.s
 
-CMakeFiles/inotify.dir/inotify.cc.o.requires:
+CMakeFiles/inotify.dir/backlog.cpp.o.requires:
 
-.PHONY : CMakeFiles/inotify.dir/inotify.cc.o.requires
+.PHONY : CMakeFiles/inotify.dir/backlog.cpp.o.requires
 
-CMakeFiles/inotify.dir/inotify.cc.o.provides: CMakeFiles/inotify.dir/inotify.cc.o.requires
-	$(MAKE) -f CMakeFiles/inotify.dir/build.make CMakeFiles/inotify.dir/inotify.cc.o.provides.build
-.PHONY : CMakeFiles/inotify.dir/inotify.cc.o.provides
+CMakeFiles/inotify.dir/backlog.cpp.o.provides: CMakeFiles/inotify.dir/backlog.cpp.o.requires
+	$(MAKE) -f CMakeFiles/inotify.dir/build.make CMakeFiles/inotify.dir/backlog.cpp.o.provides.build
+.PHONY : CMakeFiles/inotify.dir/backlog.cpp.o.provides
 
-CMakeFiles/inotify.dir/inotify.cc.o.provides.build: CMakeFiles/inotify.dir/inotify.cc.o
+CMakeFiles/inotify.dir/backlog.cpp.o.provides.build: CMakeFiles/inotify.dir/backlog.cpp.o
+
+
+CMakeFiles/inotify.dir/inotify.cpp.o: CMakeFiles/inotify.dir/flags.make
+CMakeFiles/inotify.dir/inotify.cpp.o: ../inotify.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/frs/inotify/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/inotify.dir/inotify.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/inotify.dir/inotify.cpp.o -c /home/frs/inotify/inotify.cpp
+
+CMakeFiles/inotify.dir/inotify.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/inotify.dir/inotify.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/frs/inotify/inotify.cpp > CMakeFiles/inotify.dir/inotify.cpp.i
+
+CMakeFiles/inotify.dir/inotify.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/inotify.dir/inotify.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/frs/inotify/inotify.cpp -o CMakeFiles/inotify.dir/inotify.cpp.s
+
+CMakeFiles/inotify.dir/inotify.cpp.o.requires:
+
+.PHONY : CMakeFiles/inotify.dir/inotify.cpp.o.requires
+
+CMakeFiles/inotify.dir/inotify.cpp.o.provides: CMakeFiles/inotify.dir/inotify.cpp.o.requires
+	$(MAKE) -f CMakeFiles/inotify.dir/build.make CMakeFiles/inotify.dir/inotify.cpp.o.provides.build
+.PHONY : CMakeFiles/inotify.dir/inotify.cpp.o.provides
+
+CMakeFiles/inotify.dir/inotify.cpp.o.provides.build: CMakeFiles/inotify.dir/inotify.cpp.o
+
+
+CMakeFiles/inotify.dir/myTimer.cpp.o: CMakeFiles/inotify.dir/flags.make
+CMakeFiles/inotify.dir/myTimer.cpp.o: ../myTimer.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/frs/inotify/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/inotify.dir/myTimer.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/inotify.dir/myTimer.cpp.o -c /home/frs/inotify/myTimer.cpp
+
+CMakeFiles/inotify.dir/myTimer.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/inotify.dir/myTimer.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/frs/inotify/myTimer.cpp > CMakeFiles/inotify.dir/myTimer.cpp.i
+
+CMakeFiles/inotify.dir/myTimer.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/inotify.dir/myTimer.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/frs/inotify/myTimer.cpp -o CMakeFiles/inotify.dir/myTimer.cpp.s
+
+CMakeFiles/inotify.dir/myTimer.cpp.o.requires:
+
+.PHONY : CMakeFiles/inotify.dir/myTimer.cpp.o.requires
+
+CMakeFiles/inotify.dir/myTimer.cpp.o.provides: CMakeFiles/inotify.dir/myTimer.cpp.o.requires
+	$(MAKE) -f CMakeFiles/inotify.dir/build.make CMakeFiles/inotify.dir/myTimer.cpp.o.provides.build
+.PHONY : CMakeFiles/inotify.dir/myTimer.cpp.o.provides
+
+CMakeFiles/inotify.dir/myTimer.cpp.o.provides.build: CMakeFiles/inotify.dir/myTimer.cpp.o
 
 
 # Object files for target inotify
 inotify_OBJECTS = \
-"CMakeFiles/inotify.dir/inotify.cc.o"
+"CMakeFiles/inotify.dir/backlog.cpp.o" \
+"CMakeFiles/inotify.dir/inotify.cpp.o" \
+"CMakeFiles/inotify.dir/myTimer.cpp.o"
 
 # External object files for target inotify
 inotify_EXTERNAL_OBJECTS =
 
-inotify: CMakeFiles/inotify.dir/inotify.cc.o
+inotify: CMakeFiles/inotify.dir/backlog.cpp.o
+inotify: CMakeFiles/inotify.dir/inotify.cpp.o
+inotify: CMakeFiles/inotify.dir/myTimer.cpp.o
 inotify: CMakeFiles/inotify.dir/build.make
 inotify: CMakeFiles/inotify.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/frs/inotify/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable inotify"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/frs/inotify/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable inotify"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/inotify.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -99,7 +151,9 @@ CMakeFiles/inotify.dir/build: inotify
 
 .PHONY : CMakeFiles/inotify.dir/build
 
-CMakeFiles/inotify.dir/requires: CMakeFiles/inotify.dir/inotify.cc.o.requires
+CMakeFiles/inotify.dir/requires: CMakeFiles/inotify.dir/backlog.cpp.o.requires
+CMakeFiles/inotify.dir/requires: CMakeFiles/inotify.dir/inotify.cpp.o.requires
+CMakeFiles/inotify.dir/requires: CMakeFiles/inotify.dir/myTimer.cpp.o.requires
 
 .PHONY : CMakeFiles/inotify.dir/requires
 

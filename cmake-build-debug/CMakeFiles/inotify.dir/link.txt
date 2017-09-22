@@ -1,1 +1,1 @@
-/usr/bin/c++  -g   CMakeFiles/inotify.dir/inotify.cc.o  -o inotify 
+/usr/bin/c++  -g   CMakeFiles/inotify.dir/backlog.cpp.o CMakeFiles/inotify.dir/inotify.cpp.o CMakeFiles/inotify.dir/myTimer.cpp.o  -o inotify 

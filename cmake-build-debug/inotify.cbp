@@ -84,13 +84,19 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="/home/frs/inotify/backlog.cpp">
+			<Option target="inotify"/>
+		</Unit>
 		<Unit filename="/home/frs/inotify/backlog.h">
 			<Option target="inotify"/>
 		</Unit>
-		<Unit filename="/home/frs/inotify/inotify.cc">
+		<Unit filename="/home/frs/inotify/inotify.cpp">
 			<Option target="inotify"/>
 		</Unit>
 		<Unit filename="/home/frs/inotify/inotify.h">
+			<Option target="inotify"/>
+		</Unit>
+		<Unit filename="/home/frs/inotify/myTimer.cpp">
 			<Option target="inotify"/>
 		</Unit>
 		<Unit filename="/home/frs/inotify/myTimer.h">

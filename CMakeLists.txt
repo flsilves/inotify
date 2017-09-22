@@ -4,9 +4,11 @@ project(inotify)
 set(CMAKE_CXX_STANDARD 11)
 
 set(SOURCE_FILES
+    backlog.cpp
     backlog.h
-    inotify.cc
+    inotify.cpp
     inotify.h
+    myTimer.cpp
     myTimer.h)
 
 include_directories(.)

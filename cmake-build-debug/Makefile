@@ -123,32 +123,86 @@ inotify/fast:
 	$(MAKE) -f CMakeFiles/inotify.dir/build.make CMakeFiles/inotify.dir/build
 .PHONY : inotify/fast
 
-inotify.o: inotify.cc.o
+backlog.o: backlog.cpp.o
+
+.PHONY : backlog.o
+
+# target to build an object file
+backlog.cpp.o:
+	$(MAKE) -f CMakeFiles/inotify.dir/build.make CMakeFiles/inotify.dir/backlog.cpp.o
+.PHONY : backlog.cpp.o
+
+backlog.i: backlog.cpp.i
+
+.PHONY : backlog.i
+
+# target to preprocess a source file
+backlog.cpp.i:
+	$(MAKE) -f CMakeFiles/inotify.dir/build.make CMakeFiles/inotify.dir/backlog.cpp.i
+.PHONY : backlog.cpp.i
+
+backlog.s: backlog.cpp.s
+
+.PHONY : backlog.s
+
+# target to generate assembly for a file
+backlog.cpp.s:
+	$(MAKE) -f CMakeFiles/inotify.dir/build.make CMakeFiles/inotify.dir/backlog.cpp.s
+.PHONY : backlog.cpp.s
+
+inotify.o: inotify.cpp.o
 
 .PHONY : inotify.o
 
 # target to build an object file
-inotify.cc.o:
-	$(MAKE) -f CMakeFiles/inotify.dir/build.make CMakeFiles/inotify.dir/inotify.cc.o
-.PHONY : inotify.cc.o
+inotify.cpp.o:
+	$(MAKE) -f CMakeFiles/inotify.dir/build.make CMakeFiles/inotify.dir/inotify.cpp.o
+.PHONY : inotify.cpp.o
 
-inotify.i: inotify.cc.i
+inotify.i: inotify.cpp.i
 
 .PHONY : inotify.i
 
 # target to preprocess a source file
-inotify.cc.i:
-	$(MAKE) -f CMakeFiles/inotify.dir/build.make CMakeFiles/inotify.dir/inotify.cc.i
-.PHONY : inotify.cc.i
+inotify.cpp.i:
+	$(MAKE) -f CMakeFiles/inotify.dir/build.make CMakeFiles/inotify.dir/inotify.cpp.i
+.PHONY : inotify.cpp.i
 
-inotify.s: inotify.cc.s
+inotify.s: inotify.cpp.s
 
 .PHONY : inotify.s
 
 # target to generate assembly for a file
-inotify.cc.s:
-	$(MAKE) -f CMakeFiles/inotify.dir/build.make CMakeFiles/inotify.dir/inotify.cc.s
-.PHONY : inotify.cc.s
+inotify.cpp.s:
+	$(MAKE) -f CMakeFiles/inotify.dir/build.make CMakeFiles/inotify.dir/inotify.cpp.s
+.PHONY : inotify.cpp.s
+
+myTimer.o: myTimer.cpp.o
+
+.PHONY : myTimer.o
+
+# target to build an object file
+myTimer.cpp.o:
+	$(MAKE) -f CMakeFiles/inotify.dir/build.make CMakeFiles/inotify.dir/myTimer.cpp.o
+.PHONY : myTimer.cpp.o
+
+myTimer.i: myTimer.cpp.i
+
+.PHONY : myTimer.i
+
+# target to preprocess a source file
+myTimer.cpp.i:
+	$(MAKE) -f CMakeFiles/inotify.dir/build.make CMakeFiles/inotify.dir/myTimer.cpp.i
+.PHONY : myTimer.cpp.i
+
+myTimer.s: myTimer.cpp.s
+
+.PHONY : myTimer.s
+
+# target to generate assembly for a file
+myTimer.cpp.s:
+	$(MAKE) -f CMakeFiles/inotify.dir/build.make CMakeFiles/inotify.dir/myTimer.cpp.s
+.PHONY : myTimer.cpp.s
 
 # Help Target
 help:
@@ -159,9 +213,15 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... inotify"
+	@echo "... backlog.o"
+	@echo "... backlog.i"
+	@echo "... backlog.s"
 	@echo "... inotify.o"
 	@echo "... inotify.i"
 	@echo "... inotify.s"
+	@echo "... myTimer.o"
+	@echo "... myTimer.i"
+	@echo "... myTimer.s"
 .PHONY : help
 
 

@@ -4,7 +4,9 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/frs/inotify/inotify.cc" "/home/frs/inotify/cmake-build-debug/CMakeFiles/inotify.dir/inotify.cc.o"
+  "/home/frs/inotify/backlog.cpp" "/home/frs/inotify/cmake-build-debug/CMakeFiles/inotify.dir/backlog.cpp.o"
+  "/home/frs/inotify/inotify.cpp" "/home/frs/inotify/cmake-build-debug/CMakeFiles/inotify.dir/inotify.cpp.o"
+  "/home/frs/inotify/myTimer.cpp" "/home/frs/inotify/cmake-build-debug/CMakeFiles/inotify.dir/myTimer.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

@@ -15,7 +15,7 @@ public:
     void restart();
 
     double elapsedMilliseconds();
-    double elapsedSeconds() ;
+    double elapsedSeconds();
 
 private:
     std::chrono::time_point<std::chrono::system_clock> m_StartTime;

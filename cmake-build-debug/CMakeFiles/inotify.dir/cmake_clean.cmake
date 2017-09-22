@@ -1,5 +1,7 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/inotify.dir/inotify.cc.o"
+  "CMakeFiles/inotify.dir/backlog.cpp.o"
+  "CMakeFiles/inotify.dir/inotify.cpp.o"
+  "CMakeFiles/inotify.dir/myTimer.cpp.o"
   "inotify.pdb"
   "inotify"
 )

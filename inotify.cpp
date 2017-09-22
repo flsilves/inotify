@@ -1,6 +1,7 @@
 #include "inotify.h"
 #include "backlog.h"
 
+
 #define BUF_LEN (1000 * (sizeof(struct inotify_event) + NAME_MAX + 1))  // BUFFER for inotify reader
 #define INOTIFY_EVENTS (IN_DELETE | IN_CLOSE_WRITE)                     // Relevant inotify events to watch
 
