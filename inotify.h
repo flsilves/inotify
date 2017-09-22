@@ -17,7 +17,7 @@
 #include <sys/stat.h>
 #include <sys/select.h>
 #include <sys/time.h>
-teste
+
 using namespace std;
 
 void read_arguments(const int &argc, const char *argv[], int &number_of_threads, char *folder_path);
