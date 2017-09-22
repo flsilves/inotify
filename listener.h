@@ -30,7 +30,7 @@ public:
     Listener(string &folder, ConcurrentSet* p_backlog_input);
     int readEvents();
 
-
+    void processBuffer();
 
 
 private:
@@ -46,7 +46,7 @@ private:
     string folderPath;
 
     void addWatch(string &watch_path);
-    void processBuffer();
+
 
 };
 
