@@ -1,7 +1,7 @@
 CC=g++  
 CFLAGS=-ggdb -I. 
-DEPS = inotify.h myTimer.h backlog.h
-OBJ = inotify.o myTimer.o backlog.o
+DEPS = inotify.h myTimer.h backlog.h listener.h
+OBJ = inotify.o myTimer.o backlog.o listener.o
 TARGET = inotify_runner
 LIBS = -lpthread
 

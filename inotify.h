@@ -3,6 +3,7 @@
 
 #include "myTimer.h"
 #include "backlog.h"
+#include "listener.h"
 
 #include <cstdlib>
 #include <iostream>
@@ -19,18 +20,8 @@
 #include <sys/select.h>
 #include <sys/time.h>
 
-#define EVENTS_BUFFER_LENGTH (1000 * (sizeof(struct inotify_event) + NAME_MAX + 1))  // BUFFER for inotify reader
 
 #define AUDIT_TIMEOUT 10.0
-void threadReaderLoop(string &folderPath) {
-
-    Listener ListenerInstance(folderPath, &fileList);
-
-    while (true) {
-        ListenerInstance.readEvents();
-        ListenerInstance.processBuffer();
-    }
-}
 
 
 using namespace std;
