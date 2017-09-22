@@ -2,16 +2,15 @@
 #include "backlog.h"
 
 #define BUF_LEN (1000 * (sizeof(struct inotify_event) + NAME_MAX + 1))  // BUFFER for inotify reader
-#define INOTIFY_EVENTS (IN_DELETE | IN_CLOSE_WRITE)   // Relevant inotify events to watch
+#define INOTIFY_EVENTS (IN_DELETE | IN_CLOSE_WRITE)                     // Relevant inotify events to watch
 
 #define AUDIT_TIMEOUT 10.0
 #define SELECT_TIMEOUT 3.0
 
 using namespace std;
 
-// Global variables
-int event_count = 0;       // number of inotify events catched
-bool enable_debug = true;  // enable/disable debug
+int event_count = 0;
+bool enable_debug = true;
 
 concurrent_set file_list;  
 
@@ -70,7 +69,7 @@ void read_arguments(const int &argc, const char *argv[], int &number_of_threads,
 void create_inotify_instances(string &watch_path, int &inotify_fd) {
     
     int watch_descriptor;
-    inotify_fd = inotify_init(); /* Create inotify instance */
+    inotify_fd = inotify_init();
 
     if (inotify_fd < 0) {
         perror("ERROR: create_inotify_instances -> inotify_init() ");
