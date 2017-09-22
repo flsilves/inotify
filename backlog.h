@@ -24,7 +24,7 @@
 
 using namespace std;
 
-class concurrent_set {
+class ConcurrentSet {
 
 private:
     std::condition_variable cv;

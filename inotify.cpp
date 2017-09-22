@@ -1,19 +1,13 @@
 #include "inotify.h"
 #include "backlog.h"
-
-
-#define BUF_LEN (1000 * (sizeof(struct inotify_event) + NAME_MAX + 1))  // BUFFER for inotify reader
-#define INOTIFY_EVENTS (IN_DELETE | IN_CLOSE_WRITE)                     // Relevant inotify events to watch
-
-#define AUDIT_TIMEOUT 10.0
-#define SELECT_TIMEOUT 3.0
+#include "listener.h"
 
 using namespace std;
 
 int event_count = 0;
 bool enable_debug = true;
 
-concurrent_set file_list;
+ConcurrentSet file_list;
 
 int main(const int argc, const char *argv[]) {
 
@@ -37,8 +31,7 @@ int main(const int argc, const char *argv[]) {
     exit(EXIT_SUCCESS);
 }
 
-void read_arguments(const int &argc, const char *argv[], int &number_of_threads,
-                    char *folder_path) { // TODO - number_of_threads not used
+void read_arguments(const int &argc, const char *argv[], int &number_of_threads, char *folder_path) { // TODO - number_of_threads not used
 
     struct stat statbuf;
     number_of_threads = 2; // default number of threads
@@ -68,88 +61,16 @@ void read_arguments(const int &argc, const char *argv[], int &number_of_threads,
     strcat(folder_path, "/");
 }
 
-void create_inotify_instances(string &watch_path, int &inotify_fd) {
-
-    int watch_descriptor;
-    inotify_fd = inotify_init();
-
-    if (inotify_fd < 0) {
-        perror("ERROR: create_inotify_instances -> inotify_init() ");
-        exit(EXIT_FAILURE);
-    }
-
-    watch_descriptor = inotify_add_watch(inotify_fd, watch_path.c_str(), INOTIFY_EVENTS);
-
-    if (watch_descriptor < 0) {
-        fprintf(stderr, "ERROR: create_inotify_instances -> inotify_add_watch(%d, %s, %d) ", inotify_fd,
-                watch_path.c_str(), INOTIFY_EVENTS);
-        perror("");
-        exit(EXIT_FAILURE);
-    }
-
-    debug("Watching %s using watch_descriptor %d\n", watch_path.c_str(), watch_descriptor);
-}
 
 
-void folder_listener(const int inotify_fd, string folder_path) {
 
-    Timer timer;
-    timer.start();
+void folder_listener(const int inotify_fd, string &folder_path) {
 
-    ssize_t num_read;
-    char buf[BUF_LEN];
-    char *buffer_pointer;
-    struct inotify_event *event;
-    fd_set rfds;
+    Listener ListenerInstance(folder_path, &file_list);
 
     while (true) {
-
-        struct timeval timeout;
-        timeout.tv_sec = SELECT_TIMEOUT; // Set timeout
-        timeout.tv_usec = 0;
-
-        //debug("Timer: %f \n", timer.elapsedSeconds());
-        //debug("Inotify listener: waiting for events\n");
-
-        FD_ZERO(&rfds);
-        FD_SET(inotify_fd, &rfds);
-
-        int select_retval = select(inotify_fd + 1, &rfds, NULL, NULL,
-                                   &timeout); // After select() don't rely on &rfds and &timeout values.
-
-        if (select_retval) {
-
-            num_read = read(inotify_fd, buf, BUF_LEN);
-            if (num_read < 0) {
-                perror("ERROR: folder_listener -> read() ");
-                exit(EXIT_FAILURE);
-            }
-
-            debug("Inotify listener: Aquiring lock\n");
-
-
-            debug("Inotify listener: Read %ld bytes from inotify fd\n", (long) num_read);
-
-            for (buffer_pointer = buf; buffer_pointer < buf + num_read;) {
-                event = (struct inotify_event *) buffer_pointer;
-                //debug("Inotify event: File name[%s] watch_descriptor[%d] \n", event->name, event->wd);
-                event_count++;
-                string file_path = folder_path + "/" + event->name;
-                process_event(event, file_path);
-                buffer_pointer += sizeof(struct inotify_event) + event->len;
-            }
-
-        } else if (select_retval == -1) {
-            debug("Select error \n");
-        } else if (select_retval == 0) {
-            debug("Read timeout \n");
-        }
-
-        if (timer.elapsedSeconds() > AUDIT_TIMEOUT) {
-            debug("Auditing Folder: %s\n", folder_path.c_str());
-            audit_folder(folder_path);
-            timer.restart();
-        }
+        ListenerInstance.readEvents();
+        ListenerInstance.processBuffer();
     }
 }
 

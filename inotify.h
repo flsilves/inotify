@@ -19,6 +19,13 @@
 #include <sys/select.h>
 #include <sys/time.h>
 
+#define BUF_LEN (1000 * (sizeof(struct inotify_event) + NAME_MAX + 1))  // BUFFER for inotify reader
+#define INOTIFY_EVENTS (IN_DELETE | IN_CLOSE_WRITE)                     // Relevant inotify events to watch
+
+#define AUDIT_TIMEOUT 10.0
+#define SELECT_TIMEOUT 3.0
+
+
 using namespace std;
 
 void read_arguments(const int &argc, const char *argv[], int &number_of_threads, char *folder_path);

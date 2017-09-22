@@ -6,6 +6,8 @@
 #include <ctime>
 #include <cmath>
 
+using namespace std;
+
 class Timer {
 
 public:
@@ -20,8 +22,8 @@ public:
     double elapsedSeconds();
 
 private:
-    std::chrono::time_point<std::chrono::system_clock> m_StartTime;
-    std::chrono::time_point<std::chrono::system_clock> m_EndTime;
+    chrono::time_point<std::chrono::system_clock> m_StartTime;
+    chrono::time_point<std::chrono::system_clock> m_EndTime;
     bool m_bRunning = false;
 };
 
