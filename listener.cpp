@@ -32,6 +32,8 @@ void Listener::addWatch(string &watchPath) {
 void Listener::readEvents() {
     char *bufferPointer;
 
+    FD_ZERO(&selectReadDescriptor);
+    FD_SET(inotifyFD, &selectReadDescriptor);
     timeout.tv_sec = SELECT_TIMEOUT; // Set timeout
     timeout.tv_usec = 0;
 
