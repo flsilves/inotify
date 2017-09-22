@@ -31,7 +31,7 @@ public:
     int readEvents();
 
     void processBuffer();
-    void processEvent(struct inotify_event *event, string &filePath);
+
 
 
 private:
@@ -47,6 +47,7 @@ private:
     string folderPath;
 
     void addWatch(string &watch_path);
+    void processEvent(struct inotify_event *event, string filePath);
 
 
 };

@@ -61,15 +61,13 @@ void Listener::processBuffer()
         char *buffer_pointer;
         for(buffer_pointer = eventsBuffer; buffer_pointer < eventsBuffer + numEventsRead) {
             event = (struct inotify_event *) buffer_pointer;
-            processEvent(event, folderPath + "/" + );
+            processEvent(event, folderPath + "/" +  event->name);
             buffer_pointer += sizeof(struct inotify_event) + event->len;
         }
-
-
     }
 }
 
-void Listener::processEvent(struct inotify_event *event, string &filePath) {
+void Listener::processEvent(struct inotify_event *event, string filePath) {
 
     if (event->mask & IN_DELETE) {
         p_backlog->erase(filePath);
