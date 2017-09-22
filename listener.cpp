@@ -3,7 +3,6 @@
 Listener::Listener(string &watchPath, ConcurrentSet *p_backlog_input) {
     p_backlog = p_backlog_input;
     unprocessedEvents = 0;
-    numEventsRead = 0;
     addWatch(watchPath);
     auditClock.start();
 }
@@ -42,7 +41,7 @@ void Listener::readEvents() {
 
     if (selectRetval) {
         unprocessedEvents = read(inotifyFD, eventsBuffer, EVENTS_BUFFER_LENGTH);
-
+        debug("Inotify listener: Read %ld bytes from inotify fd\n", (long) unprocessedEvents);
         if (unprocessedEvents < 0) {
             perror("ERROR: threadReaderLoop -> read() ");
         }
@@ -59,7 +58,7 @@ void Listener::readEvents() {
 void Listener::processBuffer() {
     if (unprocessedEvents > 0) {
         char *bufferPointer;
-        for (bufferPointer = eventsBuffer; bufferPointer < eventsBuffer + numEventsRead;) {
+        for (bufferPointer = eventsBuffer; bufferPointer < eventsBuffer + unprocessedEvents;) {
             event = (struct inotify_event *) bufferPointer;
             processEvent(event, folderPath + "/" + event->name);
             bufferPointer += sizeof(struct inotify_event) + event->len;
@@ -68,7 +67,6 @@ void Listener::processBuffer() {
 }
 
 void Listener::processEvent(struct inotify_event *event, string filePath) {
-
     if (event->mask & IN_DELETE) {
         p_backlog->erase(filePath);
     } else if (event->mask & IN_CLOSE_WRITE) {

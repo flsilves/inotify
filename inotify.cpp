@@ -5,7 +5,7 @@
 using namespace std;
 
 int event_count = 0;
-bool enable_debug = true;
+bool enable_debug = false;
 
 ConcurrentSet fileList;
 
@@ -70,8 +70,6 @@ void threadReaderLoop(string folderPath) {
         ListenerInstance.processBuffer();
     }
 }
-
-
 
 void threadConsumerLoop() {
 

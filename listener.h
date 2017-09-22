@@ -46,7 +46,7 @@ private:
     struct timeval timeout;
     struct inotify_event *event;
     fd_set selectReadDescriptor;
-    int inotifyFD, watchDescriptor, numEventsRead;
+    int inotifyFD, watchDescriptor;
     string folderPath;
 
     void addWatch(string &watchPath);
