@@ -4,28 +4,28 @@ Listener::Listener(string &watch_path, ConcurrentSet* p_backlog_input) {
     unreadEvents = 0;
     numEventsRead = 0;
     addWatch(watch_path);
-    audit_clock.start();
+    auditClock.start();
 }
 
 void Listener::addWatch(string &watch_path) {
-    inotify_fd = inotify_init();
-    folder_path = watch_path;
+    inotifyFD = inotify_init();
+    folderPath = watch_path;
 
-    if (inotify_fd < 0) {
+    if (inotifyFD < 0) {
         perror("ERROR: create_inotify_instances -> inotify_init() ");
         exit(EXIT_FAILURE);
     }
 
-    watch_descriptor = inotify_add_watch(inotify_fd, watch_path.c_str(), INOTIFY_EVENTS);
+    watchDescriptor = inotify_add_watch(inotifyFD, watch_path.c_str(), INOTIFY_EVENTS);
 
-    if (watch_descriptor < 0) {
-        fprintf(stderr, "ERROR: create_inotify_instances -> inotify_add_watch(%d, %s, %d) ", inotify_fd,
+    if (watchDescriptor < 0) {
+        fprintf(stderr, "ERROR: create_inotify_instances -> inotify_add_watch(%d, %s, %d) ", inotifyFD,
                 watch_path.c_str(), INOTIFY_EVENTS);
         perror("");
         exit(EXIT_FAILURE);
     }
 
-    debug("Watching %s using watch_descriptor %d\n", watch_path.c_str(), watch_descriptor);
+    debug("Watching %s using watchDescriptor %d\n", watch_path.c_str(), watchDescriptor);
 }
 
 int Listener::readEvents() {
@@ -34,11 +34,11 @@ int Listener::readEvents() {
     timeout.tv_sec = SELECT_TIMEOUT; // Set timeout
     timeout.tv_usec = 0;
 
-    int selectRetval = select(inotify_fd + 1, &rfds, NULL, NULL, &timeout); // After select() don't rely on &rfds and &timeout values.
+    int selectRetval = select(inotifyFD + 1, &rfds, NULL, NULL, &timeout); // After select() don't rely on &rfds and &timeout values.
 
     if (selectRetval) {
 
-        int numEventsRead = read(inotify_fd, events_buffer, BUF_LEN);
+        int numEventsRead = read(inotifyFD, eventsBuffer, BUF_LEN);
 
         if (numEventsRead < 0) {
             perror("ERROR: folder_listener -> read() ");
@@ -58,9 +58,9 @@ void Listener::processBuffer()
     if(numEventsRead > 0)
     {
         char *buffer_pointer;
-        for(buffer_pointer = events_buffer; buffer_pointer < events_buffer + numEventsRead) {
+        for(buffer_pointer = eventsBuffer; buffer_pointer < eventsBuffer + numEventsRead) {
             event = (struct inotify_event *) buffer_pointer;
-            processEvent(event)
+            processEvent(event);
             buffer_pointer += sizeof(struct inotify_event) + event->len;
         }
 
@@ -68,7 +68,7 @@ void Listener::processBuffer()
     }
 }
 
-void process_event(struct inotify_event *event, string &file_path) {
+void processEvent(struct inotify_event *event, string &file_path) {
     if (event->mask & IN_DELETE) {
         file_list.erase(file_path);
     } else if (event->mask & IN_CLOSE_WRITE) {

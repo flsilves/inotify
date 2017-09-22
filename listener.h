@@ -29,21 +29,24 @@ class Listener {
 public:
     Listener(string &folder, ConcurrentSet* p_backlog_input);
     int readEvents();
-    void processBuffer();
+
 
 
 
 private:
-    void addWatch(string &watch_path);
-    Timer audit_clock;
+
+    Timer auditClock;
     ConcurrentSet* p_backlog;
     int unreadEvents;
-    char events_buffer[BUF_LEN];
+    char eventsBuffer[BUF_LEN];
     struct timeval timeout;
     fd_set rfds;
     struct inotify_event *event;
-    int inotify_fd, watch_descriptor, numEventsRead;
-    string folder_path;
+    int inotifyFD, watchDescriptor, numEventsRead;
+    string folderPath;
+
+    void addWatch(string &watch_path);
+    void processBuffer();
 
 };
 
