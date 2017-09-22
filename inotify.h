@@ -21,7 +21,7 @@
 #include <sys/time.h>
 
 
-#define AUDIT_TIMEOUT 10.0
+#define AUDIT_TIMEOUT 2.0
 
 
 using namespace std;
@@ -38,6 +38,7 @@ void threadReaderLoop(string folderPath);
 
 int auditFolder(string &folderPath);
 
+void threadAuditFolder(string folderPath);
 
 template<class T>
 std::ostream &operator<<(std::ostream &os, const std::set<T> &v);

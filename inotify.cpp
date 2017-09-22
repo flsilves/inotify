@@ -22,42 +22,13 @@ int main(const int argc, const char *argv[]) {
 
     thread thread1(threadReaderLoop, folderPath);
     thread thread2(threadConsumerLoop);
+    thread thread3(threadAuditFolder, folderPath);
 
     thread1.join();
     thread2.join();
+    thread3.join();
 
     exit(EXIT_SUCCESS);
-}
-
-void readArguments(const int &argc, const char **argv, int &numberOfThreads,
-                   char *folderPath) { // TODO - number_of_threads not used
-
-    struct stat statbuf;
-    numberOfThreads = 2;
-
-    if (argc <= 1 || argc >= 4 || strcmp(argv[1], "--help") == 0) {
-        printf("USAGE: %s <pathname> <#threads>\n", argv[0]);
-        exit(1);
-    }
-
-    realpath(argv[1], folderPath);
-    debug("Validating folder: %s\n", folderPath);
-
-    if (stat(folderPath, &statbuf) == -1) {
-        printf("Argument is not a valid folder path:\n");
-        exit(EXIT_FAILURE);
-    }
-
-    if (!S_ISDIR(statbuf.st_mode)) {
-        printf("Argument is not a valid folder path:\n");
-        exit(EXIT_FAILURE);
-    }
-
-    if (argc == 3) {
-        numberOfThreads = atoi(argv[2]);
-    }
-
-    strcat(folderPath, "/");
 }
 
 
@@ -80,12 +51,24 @@ void threadConsumerLoop() {
     }
 }
 
+void threadAuditFolder(string folderPath) {
+
+    while (true) {
+        sleep(AUDIT_TIMEOUT);
+        auditFolder(folderPath);
+    }
+}
+
+
+
 void deleteFile(string &filePath) {
     if (remove(filePath.c_str()) != 0) {
         fprintf(stderr, "ERROR: threadConsumerLoop -> remove(%s) ", filePath.c_str());
         perror("");
     }
 }
+
+
 
 int auditFolder(string &folderPath) {
 
@@ -123,6 +106,36 @@ int auditFolder(string &folderPath) {
     }
 }
 
+void readArguments(const int &argc, const char **argv, int &numberOfThreads,
+                   char *folderPath) { // TODO - number_of_threads not used
+
+    struct stat statbuf;
+    numberOfThreads = 2;
+
+    if (argc <= 1 || argc >= 4 || strcmp(argv[1], "--help") == 0) {
+        printf("USAGE: %s <pathname> <#threads>\n", argv[0]);
+        exit(1);
+    }
+
+    realpath(argv[1], folderPath);
+    debug("Validating folder: %s\n", folderPath);
+
+    if (stat(folderPath, &statbuf) == -1) {
+        printf("Argument is not a valid folder path:\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (!S_ISDIR(statbuf.st_mode)) {
+        printf("Argument is not a valid folder path:\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (argc == 3) {
+        numberOfThreads = atoi(argv[2]);
+    }
+
+    strcat(folderPath, "/");
+}
 
 template<typename T>
 ostream &operator<<(ostream &os, const set<T> &v) {
