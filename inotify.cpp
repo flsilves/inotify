@@ -20,7 +20,6 @@ int main(const int argc, const char *argv[]) {
     string folderPath = string(folder_path_ch);
     cout << folderPath << endl;
 
-
     thread thread1(threadReaderLoop, folderPath);
     thread thread2(threadConsumerLoop);
 

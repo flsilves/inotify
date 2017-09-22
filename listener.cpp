@@ -1,36 +1,36 @@
 #include "listener.h"
 
-Listener::Listener(string &watch_path, ConcurrentSet* p_backlog_input) {
+Listener::Listener(string &watchPath, ConcurrentSet* p_backlog_input) {
     p_backlog = p_backlog_input;
     unreadEvents = 0;
     numEventsRead = 0;
-    addWatch(watch_path);
+    addWatch(watchPath);
     auditClock.start();
 }
 
-void Listener::addWatch(string &watch_path) {
+void Listener::addWatch(string &watchPath) {
     inotifyFD = inotify_init();
-    folderPath = watch_path;
+    folderPath = watchPath;
 
     if (inotifyFD < 0) {
         perror("ERROR: create_inotify_instances -> inotify_init() ");
         exit(EXIT_FAILURE);
     }
 
-    watchDescriptor = inotify_add_watch(inotifyFD, watch_path.c_str(), INOTIFY_EVENTS);
+    watchDescriptor = inotify_add_watch(inotifyFD, watchPath.c_str(), INOTIFY_EVENTS);
 
     if (watchDescriptor < 0) {
         fprintf(stderr, "ERROR: create_inotify_instances -> inotify_add_watch(%d, %s, %d) ", inotifyFD,
-                watch_path.c_str(), INOTIFY_EVENTS);
+                watchPath.c_str(), INOTIFY_EVENTS);
         perror("");
         exit(EXIT_FAILURE);
     }
 
-    debug("Watching %s using watchDescriptor %d\n", watch_path.c_str(), watchDescriptor);
+    debug("Watching %s using watchDescriptor %d\n", watchPath.c_str(), watchDescriptor);
 }
 
 void Listener::readEvents() {
-    char *buffer_pointer;
+    char *bufferPointer;
 
     timeout.tv_sec = SELECT_TIMEOUT; // Set timeout
     timeout.tv_usec = 0;
@@ -58,11 +58,11 @@ void Listener::processBuffer()
 {
     if(numEventsRead > 0)
     {
-        char *buffer_pointer;
-        for(buffer_pointer = eventsBuffer; buffer_pointer < eventsBuffer + numEventsRead) {
-            event = (struct inotify_event *) buffer_pointer;
+        char *bufferPointer;
+        for(bufferPointer = eventsBuffer; bufferPointer < eventsBuffer + numEventsRead;) {
+            event = (struct inotify_event *) bufferPointer;
             processEvent(event, folderPath + "/" +  event->name);
-            buffer_pointer += sizeof(struct inotify_event) + event->len;
+            bufferPointer += sizeof(struct inotify_event) + event->len;
         }
     }
 }

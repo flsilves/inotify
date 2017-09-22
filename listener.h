@@ -29,7 +29,7 @@ using namespace std;
 class Listener {
 
 public:
-    Listener(string &folder, ConcurrentSet* p_backlog_input);
+    Listener(string &watchPath, ConcurrentSet* p_backlog_input);
 
     void readEvents();
     void processBuffer();
@@ -48,7 +48,7 @@ private:
     int inotifyFD, watchDescriptor, numEventsRead;
     string folderPath;
 
-    void addWatch(string &watch_path);
+    void addWatch(string &watchPath);
     void processEvent(struct inotify_event *event, string filePath);
 
 
