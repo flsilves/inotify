@@ -123,7 +123,7 @@ int audit_folder(string &folder) {
     }
 }
 
-template<typename T>
+template template<typename T>
 ostream &operator<<(ostream &os, const set<T> &v) {
 
     os << "** DEBUG **    SET: [";
