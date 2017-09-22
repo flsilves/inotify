@@ -124,7 +124,7 @@ int auditFolder(string &folderPath) {
     }
 }
 
-template
+
 template<typename T>
 ostream &operator<<(ostream &os, const set<T> &v) {
 

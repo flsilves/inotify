@@ -2,6 +2,7 @@
 #define INOTIFY_LISTENER_H
 
 #define EVENTS_BUFFER_LENGTH (1000 * (sizeof(struct inotify_event) + NAME_MAX + 1))
+#define INOTIFY_EVENTS (IN_DELETE | IN_CLOSE_WRITE)
 
 #include <cstring>
 #include "myTimer.h"
@@ -54,6 +55,6 @@ private:
 };
 
 
-
+#endif
 
 

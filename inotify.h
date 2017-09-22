@@ -20,10 +20,9 @@
 #include <sys/time.h>
 
 #define EVENTS_BUFFER_LENGTH (1000 * (sizeof(struct inotify_event) + NAME_MAX + 1))  // BUFFER for inotify reader
-#define INOTIFY_EVENTS (IN_DELETE | IN_CLOSE_WRITE)                     // Relevant inotify events to watch
 
 #define AUDIT_TIMEOUT 10.0
-#define SELECT_TIMEOUT 3.0
+
 
 
 using namespace std;
@@ -40,7 +39,7 @@ void threadReaderLoop(string &folderPath);
 
 int auditFolder(string &folderPath);
 
-template
+
 template<class T>
 std::ostream &operator<<(std::ostream &os, const std::set<T> &v);
 
