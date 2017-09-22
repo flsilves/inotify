@@ -19,7 +19,7 @@
 #include <sys/select.h>
 #include <sys/time.h>
 
-#define BUF_LEN (1000 * (sizeof(struct inotify_event) + NAME_MAX + 1))  // BUFFER for inotify reader
+#define EVENTS_BUFFER_LENGTH (1000 * (sizeof(struct inotify_event) + NAME_MAX + 1))  // BUFFER for inotify reader
 #define INOTIFY_EVENTS (IN_DELETE | IN_CLOSE_WRITE)                     // Relevant inotify events to watch
 
 #define AUDIT_TIMEOUT 10.0
@@ -28,22 +28,14 @@
 
 using namespace std;
 
-void read_arguments(const int &argc, const char *argv[], int &number_of_threads, char *folder_path);
+void readArguments(const int &argc, const char **argv, int &numberOfThreads, char *folderPath);
 
 void debug(const char *format, ...);
-
-void create_inotify_instances(string &watch_path, int &inotify_fd);
-
-void delete_file(string &file_path);
-
-void consume_files();
-
-void folder_listener(const int inotify_fd, string folder_path);
+void deleteFile(string &filePath);
+void threadConsumerLoop();
+void threadReaderLoop(string &folderPath);
 
 int audit_folder(string &folder);
-
-void process_event(struct inotify_event *event, string &folder_path);
-
 template<class T> std::ostream &operator<<(std::ostream &os, const std::set<T> &v);
 
 static void displayInotifyEvent(struct inotify_event *i) {

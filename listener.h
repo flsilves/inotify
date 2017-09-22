@@ -1,7 +1,7 @@
 #ifndef INOTIFY_LISTENER_H
 #define INOTIFY_LISTENER_H
 
-#define BUF_LEN (1000 * (sizeof(struct inotify_event) + NAME_MAX + 1))
+#define EVENTS_BUFFER_LENGTH (1000 * (sizeof(struct inotify_event) + NAME_MAX + 1))
 
 #include <cstring>
 #include "myTimer.h"
@@ -24,12 +24,14 @@
 #include <sys/select.h>
 #include <sys/time.h>
 
+using namespace std;
+
 class Listener {
 
 public:
     Listener(string &folder, ConcurrentSet* p_backlog_input);
-    int readEvents();
 
+    void readEvents();
     void processBuffer();
 
 
@@ -39,10 +41,10 @@ private:
     Timer auditClock;
     ConcurrentSet* p_backlog;
     int unreadEvents;
-    char eventsBuffer[BUF_LEN];
+    char eventsBuffer[EVENTS_BUFFER_LENGTH];
     struct timeval timeout;
-    fd_set rfds;
     struct inotify_event *event;
+    fd_set selectReadDescriptor;
     int inotifyFD, watchDescriptor, numEventsRead;
     string folderPath;
 

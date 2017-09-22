@@ -7,23 +7,22 @@ using namespace std;
 int event_count = 0;
 bool enable_debug = true;
 
-ConcurrentSet file_list;
+ConcurrentSet fileList;
 
 int main(const int argc, const char *argv[]) {
 
-    int inotify_fd;
-    int number_of_threads = 100;
+    int numberOfThreads = 100;
     char folder_path_ch[PATH_MAX];
 
-    read_arguments(argc, argv, number_of_threads, folder_path_ch);
-    debug("input arguments: PATH:[%s]  NUMBER_OF_THREADS:[%d]\n", folder_path_ch, number_of_threads);
+    readArguments(argc, argv, numberOfThreads, folder_path_ch);
+    debug("input arguments: PATH:[%s]  NUMBER_OF_THREADS:[%d]\n", folder_path_ch, numberOfThreads);
 
-    string folder_path = string(folder_path_ch);
-    cout << folder_path << endl;
-    create_inotify_instances(folder_path, inotify_fd);
+    string folderPath = string(folder_path_ch);
+    cout << folderPath << endl;
 
-    thread thread1(folder_listener, inotify_fd, folder_path);
-    thread thread2(consume_files);
+
+    thread thread1(threadReaderLoop, folderPath);
+    thread thread2(threadConsumerLoop);
 
     thread1.join();
     thread2.join();
@@ -31,20 +30,20 @@ int main(const int argc, const char *argv[]) {
     exit(EXIT_SUCCESS);
 }
 
-void read_arguments(const int &argc, const char *argv[], int &number_of_threads, char *folder_path) { // TODO - number_of_threads not used
+void readArguments(const int &argc, const char **argv, int &numberOfThreads, char *folderPath) { // TODO - number_of_threads not used
 
     struct stat statbuf;
-    number_of_threads = 2; // default number of threads
+    numberOfThreads = 2;
 
     if (argc <= 1 || argc >= 4 || strcmp(argv[1], "--help") == 0) {
         printf("USAGE: %s <pathname> <#threads>\n", argv[0]);
         exit(1);
     }
 
-    realpath(argv[1], folder_path);
-    debug("Validating folder: %s\n", folder_path);
+    realpath(argv[1], folderPath);
+    debug("Validating folder: %s\n", folderPath);
 
-    if (stat(folder_path, &statbuf) == -1) {
+    if (stat(folderPath, &statbuf) == -1) {
         printf("Argument is not a valid folder path:\n");
         exit(EXIT_FAILURE);
     }
@@ -55,18 +54,16 @@ void read_arguments(const int &argc, const char *argv[], int &number_of_threads,
     }
 
     if (argc == 3) {
-        number_of_threads = atoi(argv[2]);
+        numberOfThreads = atoi(argv[2]);
     }
 
-    strcat(folder_path, "/");
+    strcat(folderPath, "/");
 }
 
 
+void threadReaderLoop(string &folderPath) {
 
-
-void folder_listener(const int inotify_fd, string &folder_path) {
-
-    Listener ListenerInstance(folder_path, &file_list);
+    Listener ListenerInstance(folderPath, &fileList);
 
     while (true) {
         ListenerInstance.readEvents();
@@ -74,26 +71,19 @@ void folder_listener(const int inotify_fd, string &folder_path) {
     }
 }
 
-void process_event(struct inotify_event *event, string &file_path) {
-    if (event->mask & IN_DELETE) {
-        file_list.erase(file_path);
-    } else if (event->mask & IN_CLOSE_WRITE) {
-        file_list.push(file_path);
-    }
-}
 
-void consume_files() {
+void threadConsumerLoop() {
 
     while (true) {
         debug("Consumer thread - Retrieving File... \n");
-        string file_to_delete = file_list.pop();
-        delete_file(file_to_delete);
+        string file_to_delete = fileList.pop();
+        deleteFile(file_to_delete);
     }
 }
 
-void delete_file(string &file_path) {
-    if (remove(file_path.c_str()) != 0) {
-        fprintf(stderr, "ERROR: consume_files -> remove(%s) ", file_path.c_str());
+void deleteFile(string &filePath) {
+    if (remove(filePath.c_str()) != 0) {
+        fprintf(stderr, "ERROR: threadConsumerLoop -> remove(%s) ", filePath.c_str());
         perror("");
     }
 }
@@ -112,16 +102,16 @@ int audit_folder(string &folder) {
                 continue;
             }
 
-            string file_path = folder + ent->d_name;
+            string filePath = folder + ent->d_name;
 
-            if (stat(file_path.c_str(), &statbuf) != 0) {
-                fprintf(stderr, "ERROR: audit folder -> stat(%s) ", file_path.c_str());
+            if (stat(filePath.c_str(), &statbuf) != 0) {
+                fprintf(stderr, "ERROR: audit folder -> stat(%s) ", filePath.c_str());
                 perror("");
                 return errno;
             }
 
             if (S_ISREG(statbuf.st_mode)) { // check if file isn't a directory and has right permissions
-                file_list.push(file_path.c_str());
+                fileList.push(filePath.c_str());
             }
 
         }

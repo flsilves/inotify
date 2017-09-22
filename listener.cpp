@@ -29,20 +29,20 @@ void Listener::addWatch(string &watch_path) {
     debug("Watching %s using watchDescriptor %d\n", watch_path.c_str(), watchDescriptor);
 }
 
-int Listener::readEvents() {
+void Listener::readEvents() {
     char *buffer_pointer;
 
     timeout.tv_sec = SELECT_TIMEOUT; // Set timeout
     timeout.tv_usec = 0;
 
-    int selectRetval = select(inotifyFD + 1, &rfds, NULL, NULL, &timeout); // After select() don't rely on &rfds and &timeout values.
+    int selectRetval = select(inotifyFD + 1, &selectReadDescriptor, NULL, NULL, &timeout); // After select() don't rely on &selectReadDescriptor and &timeout values.
 
     if (selectRetval) {
 
-        int numEventsRead = read(inotifyFD, eventsBuffer, BUF_LEN);
+        int numEventsRead = read(inotifyFD, eventsBuffer, EVENTS_BUFFER_LENGTH);
 
         if (numEventsRead < 0) {
-            perror("ERROR: folder_listener -> read() ");
+            perror("ERROR: threadReaderLoop -> read() ");
         }
 
     } else if (selectRetval == SELECT_ERROR) {
