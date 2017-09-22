@@ -19,7 +19,7 @@
 #include <cstdarg>
 #include <cstring>
 
-#define SELECT_TIMEOUT 0
+#define SELECT_TIMEOUT 1
 #define SELECT_ERROR -1
 
 #include <sys/inotify.h>

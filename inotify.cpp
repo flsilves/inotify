@@ -61,7 +61,7 @@ void readArguments(const int &argc, const char **argv, int &numberOfThreads,
 }
 
 
-void threadReaderLoop(string &folderPath) {
+void threadReaderLoop(string folderPath) {
 
     Listener ListenerInstance(folderPath, &fileList);
 

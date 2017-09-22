@@ -34,7 +34,7 @@ void deleteFile(string &filePath);
 
 void threadConsumerLoop();
 
-void threadReaderLoop(string &folderPath);
+void threadReaderLoop(string folderPath);
 
 int auditFolder(string &folderPath);
 
