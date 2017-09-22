@@ -2,7 +2,7 @@
 
 Listener::Listener(string &watchPath, ConcurrentSet *p_backlog_input) {
     p_backlog = p_backlog_input;
-    unreadEvents = 0;
+    unprocessedEvents = 0;
     numEventsRead = 0;
     addWatch(watchPath);
     auditClock.start();
@@ -39,24 +39,23 @@ void Listener::readEvents() {
                               &timeout); // After select() don't rely on &selectReadDescriptor and &timeout values.
 
     if (selectRetval) {
+        ssize_t unprocessedEvents = read(inotifyFD, eventsBuffer, EVENTS_BUFFER_LENGTH);
 
-        int numEventsRead = read(inotifyFD, eventsBuffer, EVENTS_BUFFER_LENGTH);
-
-        if (numEventsRead < 0) {
+        if (unprocessedEvents < 0) {
             perror("ERROR: threadReaderLoop -> read() ");
         }
 
     } else if (selectRetval == SELECT_ERROR) {
-        numEventsRead = 0;
+        unprocessedEvents = 0;
         debug("Select error \n");
     } else if (selectRetval == SELECT_TIMEOUT) {
-        numEventsRead = 0;
+        unprocessedEvents = 0;
         debug("Read timeout \n");
     }
 }
 
 void Listener::processBuffer() {
-    if (numEventsRead > 0) {
+    if (unprocessedEvents > 0) {
         char *bufferPointer;
         for (bufferPointer = eventsBuffer; bufferPointer < eventsBuffer + numEventsRead;) {
             event = (struct inotify_event *) bufferPointer;

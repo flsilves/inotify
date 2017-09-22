@@ -40,7 +40,7 @@ public:
 private:
     Timer auditClock;
     ConcurrentSet *p_backlog;
-    int unreadEvents;
+    ssize_t unprocessedEvents;
     char eventsBuffer[EVENTS_BUFFER_LENGTH];
     struct timeval timeout;
     struct inotify_event *event;

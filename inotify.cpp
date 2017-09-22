@@ -88,13 +88,13 @@ void deleteFile(string &filePath) {
     }
 }
 
-int audit_folder(string &folder) {
+int auditFolder(string &folderPath) {
 
     DIR *dir = 0;
     struct dirent *ent = 0;
     struct stat statbuf;
 
-    if ((dir = opendir(folder.c_str())) != NULL) {
+    if ((dir = opendir(folderPath.c_str())) != NULL) {
 
         while ((ent = readdir(dir)) != NULL) {
 
@@ -102,7 +102,7 @@ int audit_folder(string &folder) {
                 continue;
             }
 
-            string filePath = folder + ent->d_name;
+            string filePath = folderPath + ent->d_name;
 
             if (stat(filePath.c_str(), &statbuf) != 0) {
                 fprintf(stderr, "ERROR: audit folder -> stat(%s) ", filePath.c_str());
@@ -118,7 +118,7 @@ int audit_folder(string &folder) {
         closedir(dir);
 
     } else {
-        fprintf(stderr, "ERROR - audit_folder -> opendir(%s) ", folder.c_str());
+        fprintf(stderr, "ERROR - auditFolder -> opendir(%s) ", folderPath.c_str());
         perror("");
         return EXIT_FAILURE;
     }
