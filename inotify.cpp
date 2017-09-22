@@ -1,6 +1,4 @@
 #include "inotify.h"
-#include "backlog.h"
-#include "listener.h"
 
 using namespace std;
 
@@ -10,7 +8,6 @@ bool enable_debug = false;
 ConcurrentSet fileList;
 
 int main(const int argc, const char *argv[]) {
-
     int numberOfThreads = 100;
     char folder_path_ch[PATH_MAX];
 
@@ -59,16 +56,12 @@ void threadAuditFolder(string folderPath) {
     }
 }
 
-
-
 void deleteFile(string &filePath) {
     if (remove(filePath.c_str()) != 0) {
         fprintf(stderr, "ERROR: threadConsumerLoop -> remove(%s) ", filePath.c_str());
         perror("");
     }
 }
-
-
 
 int auditFolder(string &folderPath) {
 
