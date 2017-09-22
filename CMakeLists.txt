@@ -4,6 +4,8 @@ project(inotify)
 set(CMAKE_CXX_STANDARD 11)
 
 set(SOURCE_FILES
+    listener.cpp
+    listener.h
     backlog.cpp
     backlog.h
     inotify.cpp

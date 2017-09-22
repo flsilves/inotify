@@ -96,6 +96,12 @@
 		<Unit filename="/home/frs/inotify/inotify.h">
 			<Option target="inotify"/>
 		</Unit>
+		<Unit filename="/home/frs/inotify/listener.cpp">
+			<Option target="inotify"/>
+		</Unit>
+		<Unit filename="/home/frs/inotify/listener.h">
+			<Option target="inotify"/>
+		</Unit>
 		<Unit filename="/home/frs/inotify/myTimer.cpp">
 			<Option target="inotify"/>
 		</Unit>

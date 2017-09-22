@@ -177,6 +177,33 @@ inotify.cpp.s:
 	$(MAKE) -f CMakeFiles/inotify.dir/build.make CMakeFiles/inotify.dir/inotify.cpp.s
 .PHONY : inotify.cpp.s
 
+listener.o: listener.cpp.o
+
+.PHONY : listener.o
+
+# target to build an object file
+listener.cpp.o:
+	$(MAKE) -f CMakeFiles/inotify.dir/build.make CMakeFiles/inotify.dir/listener.cpp.o
+.PHONY : listener.cpp.o
+
+listener.i: listener.cpp.i
+
+.PHONY : listener.i
+
+# target to preprocess a source file
+listener.cpp.i:
+	$(MAKE) -f CMakeFiles/inotify.dir/build.make CMakeFiles/inotify.dir/listener.cpp.i
+.PHONY : listener.cpp.i
+
+listener.s: listener.cpp.s
+
+.PHONY : listener.s
+
+# target to generate assembly for a file
+listener.cpp.s:
+	$(MAKE) -f CMakeFiles/inotify.dir/build.make CMakeFiles/inotify.dir/listener.cpp.s
+.PHONY : listener.cpp.s
+
 myTimer.o: myTimer.cpp.o
 
 .PHONY : myTimer.o
@@ -219,6 +246,9 @@ help:
 	@echo "... inotify.o"
 	@echo "... inotify.i"
 	@echo "... inotify.s"
+	@echo "... listener.o"
+	@echo "... listener.i"
+	@echo "... listener.s"
 	@echo "... myTimer.o"
 	@echo "... myTimer.i"
 	@echo "... myTimer.s"

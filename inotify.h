@@ -2,6 +2,7 @@
 #define INOTIFY_H
 
 #include "myTimer.h"
+#include "backlog.h"
 
 #include <cstdlib>
 #include <iostream>
@@ -36,8 +37,7 @@ int audit_folder(string &folder);
 
 void process_event(struct inotify_event *event, string &folder_path);
 
-template<class T>
-std::ostream &operator<<(std::ostream &os, const std::set<T> &v);
+template<class T> std::ostream &operator<<(std::ostream &os, const std::set<T> &v);
 
 static void displayInotifyEvent(struct inotify_event *i) {
 

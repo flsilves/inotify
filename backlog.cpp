@@ -1,6 +1,6 @@
 #include "backlog.h"
 
-concurrent_set::string pop() {
+string concurrent_set::pop() {
     std::unique_lock<std::mutex> lock(_mtx); // RAII - Resource acquisition is initialization
     while (_set.empty()) {
         cv.wait(lock);
@@ -13,13 +13,12 @@ concurrent_set::string pop() {
     return ret;
 }
 
-concurrent_set::size_t erase(string value) {
+size_t concurrent_set::erase(string value) {
     std::unique_lock<std::mutex> lock(_mtx);
     return _set.erase(value);
 }
 
-
-concurrent_set:: void push(string value) {
+void concurrent_set::push(string value) {
     std::unique_lock<std::mutex> lock(_mtx); // RAII - Resource acquisition is initialization
     _set.insert(_set.begin(), value);
     cv.notify_one();

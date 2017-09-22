@@ -6,7 +6,10 @@
 class Listener {
 
 public:
-    Listener(string folder)
+    Listener(string folder);
+
+
+
 private:
 
     char buffer[BUF_LEN];
