@@ -25,7 +25,7 @@ using namespace std;
 class concurrent_set
 {
     std::condition_variable cv;
-    mutable std::mutex _mtx;
+    std::mutex _mtx;
     std::set<string> _set;
 
 public:

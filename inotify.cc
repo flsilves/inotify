@@ -211,10 +211,7 @@ int audit_folder(string &folder) {
     }
 }
 
-
-
-template <typename T> // Debug print for set<T>
-ostream& operator << (ostream& os, const set<T>& v) {
+template <typename T> ostream& operator << (ostream& os, const set<T>& v) {
 
     os << "** DEBUG **    SET: [";
     for (typename set<T>::const_iterator it = v.begin(); it != v.end(); ++it)
