@@ -29,7 +29,8 @@ int main(const int argc, const char *argv[]) {
     exit(EXIT_SUCCESS);
 }
 
-void readArguments(const int &argc, const char **argv, int &numberOfThreads, char *folderPath) { // TODO - number_of_threads not used
+void readArguments(const int &argc, const char **argv, int &numberOfThreads,
+                   char *folderPath) { // TODO - number_of_threads not used
 
     struct stat statbuf;
     numberOfThreads = 2;
@@ -123,7 +124,8 @@ int audit_folder(string &folder) {
     }
 }
 
-template template<typename T>
+template
+template<typename T>
 ostream &operator<<(ostream &os, const set<T> &v) {
 
     os << "** DEBUG **    SET: [";

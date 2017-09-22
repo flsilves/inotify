@@ -1,6 +1,6 @@
 #include "listener.h"
 
-Listener::Listener(string &watchPath, ConcurrentSet* p_backlog_input) {
+Listener::Listener(string &watchPath, ConcurrentSet *p_backlog_input) {
     p_backlog = p_backlog_input;
     unreadEvents = 0;
     numEventsRead = 0;
@@ -35,7 +35,8 @@ void Listener::readEvents() {
     timeout.tv_sec = SELECT_TIMEOUT; // Set timeout
     timeout.tv_usec = 0;
 
-    int selectRetval = select(inotifyFD + 1, &selectReadDescriptor, NULL, NULL, &timeout); // After select() don't rely on &selectReadDescriptor and &timeout values.
+    int selectRetval = select(inotifyFD + 1, &selectReadDescriptor, NULL, NULL,
+                              &timeout); // After select() don't rely on &selectReadDescriptor and &timeout values.
 
     if (selectRetval) {
 
@@ -54,14 +55,12 @@ void Listener::readEvents() {
     }
 }
 
-void Listener::processBuffer()
-{
-    if(numEventsRead > 0)
-    {
+void Listener::processBuffer() {
+    if (numEventsRead > 0) {
         char *bufferPointer;
-        for(bufferPointer = eventsBuffer; bufferPointer < eventsBuffer + numEventsRead;) {
+        for (bufferPointer = eventsBuffer; bufferPointer < eventsBuffer + numEventsRead;) {
             event = (struct inotify_event *) bufferPointer;
-            processEvent(event, folderPath + "/" +  event->name);
+            processEvent(event, folderPath + "/" + event->name);
             bufferPointer += sizeof(struct inotify_event) + event->len;
         }
     }

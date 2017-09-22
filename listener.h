@@ -17,8 +17,10 @@
 #include <dirent.h>
 #include <cstdarg>
 #include <cstring>
+
 #define SELECT_TIMEOUT 0
 #define SELECT_ERROR -1
+
 #include <sys/inotify.h>
 #include <sys/stat.h>
 #include <sys/select.h>
@@ -29,17 +31,15 @@ using namespace std;
 class Listener {
 
 public:
-    Listener(string &watchPath, ConcurrentSet* p_backlog_input);
+    Listener(string &watchPath, ConcurrentSet *p_backlog_input);
 
     void readEvents();
+
     void processBuffer();
 
-
-
 private:
-
     Timer auditClock;
-    ConcurrentSet* p_backlog;
+    ConcurrentSet *p_backlog;
     int unreadEvents;
     char eventsBuffer[EVENTS_BUFFER_LENGTH];
     struct timeval timeout;
@@ -49,9 +49,8 @@ private:
     string folderPath;
 
     void addWatch(string &watchPath);
+
     void processEvent(struct inotify_event *event, string filePath);
-
-
 };
 
 

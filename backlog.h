@@ -32,7 +32,6 @@ private:
     std::set<string> _set;
 
 public:
-
     string pop();
 
     size_t erase(string value);

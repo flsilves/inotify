@@ -31,12 +31,18 @@ using namespace std;
 void readArguments(const int &argc, const char **argv, int &numberOfThreads, char *folderPath);
 
 void debug(const char *format, ...);
+
 void deleteFile(string &filePath);
+
 void threadConsumerLoop();
+
 void threadReaderLoop(string &folderPath);
 
 int audit_folder(string &folder);
-template template<class T> std::ostream &operator<<(std::ostream &os, const std::set<T> &v);
+
+template
+template<class T>
+std::ostream &operator<<(std::ostream &os, const std::set<T> &v);
 
 static void displayInotifyEvent(struct inotify_event *i) {
 
@@ -69,5 +75,5 @@ static void displayInotifyEvent(struct inotify_event *i) {
     }
 }
 
-#endif 
+#endif
 
