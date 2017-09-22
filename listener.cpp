@@ -1,6 +1,7 @@
 #include "listener.h"
 
 Listener::Listener(string &watch_path, ConcurrentSet* p_backlog_input) {
+    p_backlog = p_backlog_input;
     unreadEvents = 0;
     numEventsRead = 0;
     addWatch(watch_path);
@@ -60,7 +61,7 @@ void Listener::processBuffer()
         char *buffer_pointer;
         for(buffer_pointer = eventsBuffer; buffer_pointer < eventsBuffer + numEventsRead) {
             event = (struct inotify_event *) buffer_pointer;
-            processEvent(event);
+            processEvent(event, folderPath + "/" + );
             buffer_pointer += sizeof(struct inotify_event) + event->len;
         }
 
@@ -68,11 +69,12 @@ void Listener::processBuffer()
     }
 }
 
-void processEvent(struct inotify_event *event, string &file_path) {
+void Listener::processEvent(struct inotify_event *event, string &filePath) {
+
     if (event->mask & IN_DELETE) {
-        file_list.erase(file_path);
+        p_backlog->erase(filePath);
     } else if (event->mask & IN_CLOSE_WRITE) {
-        file_list.push(file_path);
+        p_backlog->push(filePath);
     }
 }
 

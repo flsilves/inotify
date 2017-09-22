@@ -31,6 +31,7 @@ public:
     int readEvents();
 
     void processBuffer();
+    void processEvent(struct inotify_event *event, string &filePath);
 
 
 private:
