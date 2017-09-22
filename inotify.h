@@ -9,7 +9,7 @@
 #include <thread>
 #include <mutex>
 
-#include <dirent.h> 
+#include <dirent.h>
 #include <cstdarg>
 #include <cstring>
 
@@ -23,17 +23,24 @@ using namespace std;
 void read_arguments(const int &argc, const char *argv[], int &number_of_threads, char *folder_path);
 
 void debug(const char *format, ...);
+
 void create_inotify_instances(string &watch_path, int &inotify_fd);
+
 void delete_file(string &file_path);
+
 void consume_files();
+
 void folder_listener(const int inotify_fd, string folder_path);
+
 int audit_folder(string &folder);
 
-void process_event(struct inotify_event *event, string& folder_path);
-template <class T> std::ostream& operator<< (std::ostream& os, const std::set<T>& v);
+void process_event(struct inotify_event *event, string &folder_path);
+
+template<class T>
+std::ostream &operator<<(std::ostream &os, const std::set<T> &v);
 
 static void displayInotifyEvent(struct inotify_event *i) {
-    
+
     printf(" wd =%2d; ", i->wd);
     if (i->cookie > 0) {
         printf("cookie =%4d; ", i->cookie);
@@ -56,7 +63,7 @@ static void displayInotifyEvent(struct inotify_event *i) {
     if (i->mask & IN_OPEN) printf("IN_OPEN ");
     if (i->mask & IN_Q_OVERFLOW) printf("IN_Q_OVERFLOW ");
     if (i->mask & IN_UNMOUNT) printf("IN_UNMOUNT ");
-    
+
     printf("\n");
     if (i->len > 0) {
         printf(" name = %s\n", i->name);

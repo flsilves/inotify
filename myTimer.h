@@ -6,15 +6,17 @@
 #include <ctime>
 #include <cmath>
 
-class Timer
-{
+class Timer {
 
 public:
     void start();
+
     void stop();
+
     void restart();
 
     double elapsedMilliseconds();
+
     double elapsedSeconds();
 
 private:

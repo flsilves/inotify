@@ -10,9 +10,11 @@
 #include <condition_variable>
 #include <cstdlib>
 
-#include <dirent.h> 
+#include <dirent.h>
 #include <cstdarg>
 #include <cassert>
+#include <cstring>
+#include <set>
 
 #include <sys/inotify.h>
 #include <sys/stat.h>
@@ -22,41 +24,18 @@
 
 using namespace std;
 
-class concurrent_set
-{
+class concurrent_set {
     std::condition_variable cv;
     std::mutex _mtx;
     std::set<string> _set;
 
 public:
 
-    string pop()
-    {
-        std::unique_lock<std::mutex> lock(_mtx); // RAII - Resource acquisition is initialization
-        while (_set.empty()) {
-         cv.wait(lock);
-        }
+    string pop();
 
-        assert(!_set.empty());
-        auto it = _set.begin();
-        string ret = *it;
-        _set.erase(it);
-        return ret;
-    }
+    size_t erase(string value);
 
-    size_t erase(string value)
-    {
-        std::unique_lock<std::mutex> lock(_mtx);
-        return _set.erase(value);
-    }
-
-
-    void push(string value)
-    {
-        std::unique_lock<std::mutex> lock(_mtx); // RAII - Resource acquisition is initialization
-        _set.insert(_set.begin(), value);
-        cv.notify_one();
-    }
+    void push(string value);
 };
 
 #endif // BACKLOG_H

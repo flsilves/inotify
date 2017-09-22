@@ -18,10 +18,9 @@ void Timer::restart() {
 double Timer::elapsedMilliseconds() {
     std::chrono::time_point<std::chrono::system_clock> endTime;
 
-    if(m_bRunning) {
+    if (m_bRunning) {
         endTime = std::chrono::system_clock::now();
-    }
-    else {
+    } else {
         endTime = m_EndTime;
     }
 
