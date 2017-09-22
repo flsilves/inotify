@@ -8,10 +8,10 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
-#include <stdlib.h>
+#include <cstdlib>
 
 #include <dirent.h> 
-#include <stdarg.h>  
+#include <cstdarg>
 #include <cassert>
 
 #include <sys/inotify.h>

@@ -3,15 +3,15 @@
 
 #include "myTimer.h"
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
 #include <set>
 #include <thread>
 #include <mutex>
 
 #include <dirent.h> 
-#include <stdarg.h>  
-#include <string.h>
+#include <cstdarg>
+#include <cstring>
 
 #include <sys/inotify.h>
 #include <sys/stat.h>
