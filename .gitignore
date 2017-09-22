@@ -2,3 +2,5 @@
 *.o
 inotify_runner
 watch
+.idea
+cmake-build-debug
