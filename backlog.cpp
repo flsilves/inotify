@@ -1,7 +1,7 @@
 #include "backlog.h"
 
 
-ConcurrentBacklog::ConcurrentBacklog()  {
+ConcurrentBacklog::ConcurrentBacklog() {
     pMutex.initialize();
 
 }
@@ -13,9 +13,9 @@ ConcurrentBacklog::~ConcurrentBacklog() {
 string ConcurrentBacklog::pop() {
     MutexAutoLock lk(pMutex);
 
-   // if (backlog.empty()) {
+    // if (backlog.empty()) {
     //return nullptr ;    //notEmptyCondition.wait(lk);
-   // }
+    // }
 
     assert(!backlog.empty());
     auto it = backlog.begin();
@@ -35,7 +35,7 @@ void ConcurrentBacklog::push(string value) {
     //notEmptyCondition.notify_one();
 }
 
-void ConcurrentBacklog::print(ostream& os) const {
+void ConcurrentBacklog::print(ostream &os) const {
     for (auto it = backlog.begin(); it != backlog.end(); ++it) {
         os << " " << *it << ",";
     }

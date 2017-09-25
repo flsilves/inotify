@@ -27,7 +27,6 @@ class ConcurrentBacklog {
 
 private:
     std::condition_variable notEmptyCondition;
-    std::mutex writeMutex;
     Mutex pMutex;
     std::set<string> backlog;
 
