@@ -1,10 +1,10 @@
 #include "listener.h"
 
+
 Listener::Listener(string &watchPath, ConcurrentSet *p_backlog_input) {
     p_backlog = p_backlog_input;
     unprocessedEvents = 0;
     addWatch(watchPath);
-    
 }
 
 void Listener::addWatch(string &watchPath) {
@@ -33,11 +33,10 @@ void Listener::readEvents() {
 
     FD_ZERO(&selectReadDescriptor);
     FD_SET(inotifyFD, &selectReadDescriptor);
-    timeout.tv_sec = SELECT_TIMEOUT; // Set timeout
+    timeout.tv_sec = SELECT_TIMEOUT;
     timeout.tv_usec = 0;
 
-    int selectRetval = select(inotifyFD + 1, &selectReadDescriptor, NULL, NULL,
-                              &timeout); // After select() don't rely on &selectReadDescriptor and &timeout values.
+    int selectRetval = select(inotifyFD + 1, &selectReadDescriptor, NULL, NULL, &timeout);
 
     if (selectRetval) {
         unprocessedEvents = read(inotifyFD, eventsBuffer, EVENTS_BUFFER_LENGTH);
@@ -64,6 +63,7 @@ void Listener::processBuffer() {
             bufferPointer += sizeof(struct inotify_event) + event->len;
         }
     }
+    cout << p_backlog;
 }
 
 void Listener::processEvent(struct inotify_event *event, string filePath) {

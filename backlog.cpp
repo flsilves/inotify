@@ -23,3 +23,13 @@ void ConcurrentSet::push(string value) {
     cv.notify_one();
 }
 
+
+ostream& operator<<(ostream &os, ConcurrentSet *v) {
+
+    //os << "** DEBUG **    SET: [";
+    for (auto it = v->_set.begin(); it != v->_set.end(); ++it) {
+        os << " " << *it << ",";
+    }
+    os << "]";
+    return os;
+}

@@ -33,10 +33,12 @@ private:
 
 public:
     string pop();
-
     size_t erase(string value);
-
     void push(string value);
 };
+
+ostream& operator<<(ostream &os, ConcurrentSet *v);
+
+
 
 #endif // BACKLOG_H

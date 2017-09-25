@@ -130,16 +130,7 @@ void readArguments(const int &argc, const char **argv, int &numberOfThreads,
     strcat(folderPath, "/");
 }
 
-template<typename T>
-ostream &operator<<(ostream &os, const set<T> &v) {
 
-    os << "** DEBUG **    SET: [";
-    for (typename set<T>::const_iterator it = v.begin(); it != v.end(); ++it) {
-        os << " " << *it << ",";
-    }
-    os << "]";
-    return os;
-}
 
 void debug(const char *format, ...) {
     va_list args;
