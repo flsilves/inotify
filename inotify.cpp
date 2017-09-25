@@ -22,13 +22,9 @@ int main(const int argc, const char *argv[]) {
     pthread_create(&thread2, NULL, threadConsumerLoop, NULL);
     pthread_create(&thread3, NULL, threadAuditFolder, &folderPath);
 
-
     pthread_join(thread1, NULL);
     pthread_join(thread2, NULL);
     pthread_join(thread3, NULL);
-    //thread1.join();
-    //thread2.join();
-    //thread3.join();
 
     exit(EXIT_SUCCESS);
 }

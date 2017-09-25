@@ -14,7 +14,7 @@ void Mutex::initialize() {
     if (isInitialized == false) {
         int rc = pthread_mutex_init(&mutex, NULL);
         if (rc != 0) {
-           throw MyException("Failed to initialize Mutex");
+            throw MyException("Failed to initialize Mutex");
         }
         isInitialized = true;
     }

@@ -6,7 +6,6 @@
 #include <iostream>
 #include <cstdlib>
 
-
 #include <dirent.h>
 #include <cstdarg>
 #include <cassert>

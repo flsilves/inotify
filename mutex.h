@@ -4,39 +4,42 @@
 #include <pthread.h>
 #include "exception.h"
 
-class Mutex
-{
+class Mutex {
     friend class ConcurrentBacklog;
+
 public:
     Mutex();
+
     ~Mutex();
+
     void initialize();
+
     void lock();
+
     void unlock();
+
     void terminate();
 
 
 private:
     Mutex(const Mutex &m);
+
     pthread_mutex_t mutex;
     bool isInitialized;
 
 };
 
-class MutexAutoLock
-{
+class MutexAutoLock {
 
     friend class ConcurrentBacklog;
+
 public:
 
-
-    MutexAutoLock(Mutex &m) : mutex(m)
-    {
+    MutexAutoLock(Mutex &m) : mutex(m) {
         mutex.lock();
     }
 
-    ~MutexAutoLock()
-    {
+    ~MutexAutoLock() {
         mutex.unlock();
     }
 
