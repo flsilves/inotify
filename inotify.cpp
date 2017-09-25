@@ -2,19 +2,18 @@
 
 using namespace std;
 
-int event_count = 0;
-bool enable_debug = false;
+bool enableDebug = false;
 
 ConcurrentBacklog fileList;
 
 int main(const int argc, const char *argv[]) {
     int numberOfThreads = 100;
-    char folder_path_ch[PATH_MAX];
+    char folderPathC[PATH_MAX];
 
-    readArguments(argc, argv, numberOfThreads, folder_path_ch);
-    debug("input arguments: PATH:[%s]  NUMBER_OF_THREADS:[%d]\n", folder_path_ch, numberOfThreads);
+    readArguments(argc, argv, numberOfThreads, folderPathC);
+    debug("input arguments: PATH:[%s]  NUMBER_OF_THREADS:[%d]\n", folderPathC, numberOfThreads);
 
-    string folderPath = string(folder_path_ch);
+    string folderPath = string(folderPathC);
     cout << folderPath << endl;
 
     thread thread1(threadReaderLoop, folderPath);
@@ -43,8 +42,8 @@ void threadConsumerLoop() {
 
     while (true) {
         debug("Consumer thread - Retrieving File... \n");
-        string nextFileInBacklog = fileList.pop();
-        deleteFile(nextFileInBacklog);
+        string file_to_delete = fileList.pop();
+        deleteFile(file_to_delete);
     }
 }
 
@@ -135,7 +134,7 @@ void debug(const char *format, ...) {
     va_list args;
     va_start(args, format);
 
-    if (enable_debug) {
+    if (enableDebug) {
         printf("** DEBUG **    ");
         vprintf(format, args);
     }
