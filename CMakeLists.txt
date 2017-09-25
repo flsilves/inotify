@@ -9,9 +9,7 @@ set(SOURCE_FILES
     backlog.cpp
     backlog.h
     inotify.cpp
-    inotify.h
-    myTimer.cpp
-    myTimer.h)
+    inotify.h)
 
 include_directories(.)
 
