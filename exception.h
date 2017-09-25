@@ -1,7 +1,6 @@
 #ifndef INOTIFY_EXCEPTION_H
 #define INOTIFY_EXCEPTION_H
 
-
 #include <string>
 #include <exception>
 

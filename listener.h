@@ -12,8 +12,6 @@
 #include <cstdlib>
 #include <iostream>
 #include <set>
-#include <thread>
-
 
 #include <dirent.h>
 #include <cstdarg>

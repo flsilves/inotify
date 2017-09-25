@@ -10,29 +10,35 @@ int main(const int argc, const char *argv[]) {
     int numberOfThreads = 100;
     char folderPathC[PATH_MAX];
 
-
-
     readArguments(argc, argv, numberOfThreads, folderPathC);
     debug("input arguments: PATH:[%s]  NUMBER_OF_THREADS:[%d]\n", folderPathC, numberOfThreads);
 
     string folderPath = string(folderPathC);
     cout << folderPath << endl;
 
-    thread thread1(threadReaderLoop, folderPath);
-    thread thread2(threadConsumerLoop);
-    thread thread3(threadAuditFolder, folderPath);
+    pthread_t thread1, thread2, thread3;
 
-    thread1.join();
-    thread2.join();
-    thread3.join();
+    pthread_create(&thread1, NULL, threadReaderLoop, &folderPath);
+    pthread_create(&thread2, NULL, threadConsumerLoop, NULL);
+    pthread_create(&thread3, NULL, threadAuditFolder, &folderPath);
+
+
+    pthread_join(thread1, NULL);
+    pthread_join(thread2, NULL);
+    pthread_join(thread3, NULL);
+    //thread1.join();
+    //thread2.join();
+    //thread3.join();
 
     exit(EXIT_SUCCESS);
 }
 
 
-void threadReaderLoop(string folderPath) {
+void *threadReaderLoop(void* arg) {
 
-    Listener ListenerInstance(folderPath, &fileList);
+    string *folderPath = static_cast<string* > (arg);
+
+    Listener ListenerInstance(*folderPath, &fileList);
 
     while (true) {
         ListenerInstance.readEvents();
@@ -40,22 +46,23 @@ void threadReaderLoop(string folderPath) {
     }
 }
 
-void threadConsumerLoop() {
+void *threadConsumerLoop(void *) {
 
     while (true) {
         debug("Consumer thread - Retrieving File... \n");
-        if(fileList.size() != 0) {
+        if (fileList.size() != 0) {
             string file_to_delete = fileList.pop();
             deleteFile(file_to_delete);
         }
     }
 }
 
-void threadAuditFolder(string folderPath) {
+void *threadAuditFolder(void* arg) {
 
+    string *folderPath = static_cast<string* > (arg);
     while (true) {
         sleep(AUDIT_TIMEOUT);
-        auditFolder(folderPath);
+        auditFolder(*folderPath);
     }
 }
 
@@ -79,7 +86,6 @@ void auditFolder(string &folderPath) {
             if (ent->d_name[0] == '.') { // ignore all files that start with '.'
                 continue;
             }
-
             string filePath = folderPath + ent->d_name;
 
             if (stat(filePath.c_str(), &statbuf) != 0) {
@@ -91,7 +97,6 @@ void auditFolder(string &folderPath) {
             if (S_ISREG(statbuf.st_mode)) { // check if file isn't a directory and has right permissions
                 fileList.push(filePath.c_str());
             }
-
         }
         closedir(dir);
 

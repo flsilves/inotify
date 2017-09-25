@@ -1,26 +1,25 @@
 #ifndef BACKLOG_H
 #define BACKLOG_H
 
+#include "exception.h"
+#include "mutex.h"
 #include <iostream>
-
-#include <thread>
-
-
 #include <cstdlib>
+
 
 #include <dirent.h>
 #include <cstdarg>
 #include <cassert>
 #include <cstring>
 #include <set>
+#include <pthread.h>
 
-#include "mutex.h"
 #include <sys/inotify.h>
 #include <sys/stat.h>
 #include <sys/select.h>
 #include <sys/time.h>
 #include <unistd.h>
-#include "exception.h"
+
 using namespace std;
 
 class ConcurrentBacklog {

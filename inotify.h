@@ -3,11 +3,13 @@
 
 #include "backlog.h"
 #include "listener.h"
+#include "exception.h"
+#include "mutex.h"
 
+#include <cstdio>
 #include <cstdlib>
 #include <iostream>
 #include <set>
-#include <thread>
 
 #include <dirent.h>
 #include <cstdarg>
@@ -17,8 +19,7 @@
 #include <sys/stat.h>
 #include <sys/select.h>
 #include <sys/time.h>
-#include "exception.h"
-#include "mutex.h"
+
 #define AUDIT_TIMEOUT 2.0
 
 using namespace std;
@@ -29,13 +30,13 @@ void debug(const char *format, ...);
 
 void deleteFile(string &filePath);
 
-void threadConsumerLoop();
+void *threadConsumerLoop(void *);
 
-void threadReaderLoop(string folderPath);
+void *threadReaderLoop(void *arg);
 
 void auditFolder(string &folderPath);
 
-void threadAuditFolder(string folderPath);
+void *threadAuditFolder(void *folderPath);
 
 
 #endif

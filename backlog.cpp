@@ -1,7 +1,7 @@
 #include "backlog.h"
 
 ConcurrentBacklog::ConcurrentBacklog() {
-    backlogNotEmpty = PTHREAD_COND_INITIALIZER;
+    pthread_cond_init(&backlogNotEmpty, NULL);
     pMutex.initialize();
 }
 
@@ -16,7 +16,7 @@ string ConcurrentBacklog::pop() {
         pthread_cond_wait(&backlogNotEmpty, &(pMutex.mutex));
     }
     assert(!backlog.empty());
-    auto it = backlog.begin();
+    set<string>::const_iterator it = backlog.begin();
     string ret = *it;
     backlog.erase(it);
     return ret;
@@ -34,7 +34,7 @@ void ConcurrentBacklog::push(string value) {
 }
 
 void ConcurrentBacklog::print(ostream &os) const {
-    for (auto it = backlog.begin(); it != backlog.end(); ++it) {
+    for (set<string>::const_iterator it = backlog.begin(); it != backlog.end(); ++it) {
         os << " " << *it << ",";
     }
 }
