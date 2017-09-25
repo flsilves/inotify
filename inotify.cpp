@@ -43,8 +43,8 @@ void threadConsumerLoop() {
 
     while (true) {
         debug("Consumer thread - Retrieving File... \n");
-        string file_to_delete = fileList.pop();
-        deleteFile(file_to_delete);
+        string nextFileInBacklog = fileList.pop();
+        deleteFile(nextFileInBacklog);
     }
 }
 
