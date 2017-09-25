@@ -8,6 +8,7 @@ set(SOURCE_FILES
     listener.h
     backlog.cpp
     backlog.h
+    exception.h
     mutex.cpp
     mutex.h
     inotify.cpp
