@@ -1,8 +1,8 @@
 #include "listener.h"
 
 
-Listener::Listener(string &watchPath, ConcurrentBacklog *p_backlog_input) {
-    p_backlog = p_backlog_input;
+Listener::Listener(string &watchPath, ConcurrentBacklog *p_backlogInput) {
+    p_backlog = p_backlogInput;
     unprocessedEvents = 0;
     addWatch(watchPath);
 }
@@ -54,7 +54,7 @@ void Listener::readEvents() {
     }
 }
 
-void Listener::processBuffer() {
+void Listener::processBacklog() {
     if (unprocessedEvents > 0) {
         char *bufferPointer;
         for (bufferPointer = eventsBuffer; bufferPointer < eventsBuffer + unprocessedEvents;) {

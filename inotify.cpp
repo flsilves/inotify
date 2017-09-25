@@ -34,7 +34,7 @@ void threadReaderLoop(string folderPath) {
 
     while (true) {
         ListenerInstance.readEvents();
-        ListenerInstance.processBuffer();
+        ListenerInstance.processBacklog();
     }
 }
 

@@ -32,11 +32,11 @@ using namespace std;
 class Listener {
 
 public:
-    Listener(string &watchPath, ConcurrentBacklog *p_backlog_input);
+    Listener(string &watchPath, ConcurrentBacklog *p_backlogInput);
 
     void readEvents();
 
-    void processBuffer();
+    void processBacklog();
 
 private:
     ConcurrentBacklog *p_backlog;
