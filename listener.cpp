@@ -63,7 +63,7 @@ void Listener::processBuffer() {
             bufferPointer += sizeof(struct inotify_event) + event->len;
         }
     }
-    p_backlog->print();
+    //p_backlog->print();
 }
 
 void Listener::processEvent(struct inotify_event *event, string filePath) {
