@@ -4,7 +4,7 @@ Listener::Listener(string &watchPath, ConcurrentSet *p_backlog_input) {
     p_backlog = p_backlog_input;
     unprocessedEvents = 0;
     addWatch(watchPath);
-    auditClock.start();
+    
 }
 
 void Listener::addWatch(string &watchPath) {
