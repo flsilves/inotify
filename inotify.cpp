@@ -5,7 +5,7 @@ using namespace std;
 int event_count = 0;
 bool enable_debug = false;
 
-ConcurrentSet fileList;
+ConcurrentBacklog fileList;
 
 int main(const int argc, const char *argv[]) {
     int numberOfThreads = 100;

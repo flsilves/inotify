@@ -24,21 +24,21 @@
 
 using namespace std;
 
-class ConcurrentSet {
+class ConcurrentBacklog {
 
 private:
-    std::condition_variable cv;
-    std::mutex _mtx;
-    std::set<string> _set;
+    std::condition_variable _signalingCV;
+    std::mutex _mutex;
+    std::set<string> backlog;
 
 public:
+    void print(ostream &os = std::cout) const;
+    int size() const;
     string pop();
     size_t erase(string value);
     void push(string value);
 };
 
-ostream& operator<<(ostream &os, ConcurrentSet *v);
+void operator<<(ostream &os, ConcurrentBacklog *v);
 
-
-
-#endif // BACKLOG_H
+#endif

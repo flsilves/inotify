@@ -32,7 +32,7 @@ using namespace std;
 class Listener {
 
 public:
-    Listener(string &watchPath, ConcurrentSet *p_backlog_input);
+    Listener(string &watchPath, ConcurrentBacklog *p_backlog_input);
 
     void readEvents();
 
@@ -40,7 +40,7 @@ public:
 
 private:
     Timer auditClock;
-    ConcurrentSet *p_backlog;
+    ConcurrentBacklog *p_backlog;
     ssize_t unprocessedEvents;
     char eventsBuffer[EVENTS_BUFFER_LENGTH];
     struct timeval timeout;

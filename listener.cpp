@@ -1,7 +1,7 @@
 #include "listener.h"
 
 
-Listener::Listener(string &watchPath, ConcurrentSet *p_backlog_input) {
+Listener::Listener(string &watchPath, ConcurrentBacklog *p_backlog_input) {
     p_backlog = p_backlog_input;
     unprocessedEvents = 0;
     addWatch(watchPath);
@@ -63,7 +63,7 @@ void Listener::processBuffer() {
             bufferPointer += sizeof(struct inotify_event) + event->len;
         }
     }
-    cout << p_backlog;
+    p_backlog->print();
 }
 
 void Listener::processEvent(struct inotify_event *event, string filePath) {

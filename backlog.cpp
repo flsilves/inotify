@@ -1,35 +1,38 @@
 #include "backlog.h"
 
-string ConcurrentSet::pop() {
-    unique_lock<std::mutex> lock(_mtx);
-    while (_set.empty()) {
-        cv.wait(lock);
+string ConcurrentBacklog::pop() {
+    unique_lock<std::mutex> lock(_mutex);
+    while (backlog.empty()) {
+        _signalingCV.wait(lock);
     }
-    assert(!_set.empty());
-    auto it = _set.begin();
+    assert(!backlog.empty());
+    auto it = backlog.begin();
     string ret = *it;
-    _set.erase(it);
+    backlog.erase(it);
     return ret;
 }
 
-size_t ConcurrentSet::erase(string value) {
-    unique_lock<std::mutex> lock(_mtx);
-    return _set.erase(value);
+size_t ConcurrentBacklog::erase(string value) {
+    unique_lock<std::mutex> lock(_mutex);
+    return backlog.erase(value);
 }
 
-void ConcurrentSet::push(string value) {
-    unique_lock<std::mutex> lock(_mtx);
-    _set.insert(_set.begin(), value);
-    cv.notify_one();
+void ConcurrentBacklog::push(string value) {
+    unique_lock<std::mutex> lock(_mutex);
+    backlog.insert(backlog.begin(), value);
+    _signalingCV.notify_one();
 }
 
-
-ostream& operator<<(ostream &os, ConcurrentSet *v) {
-
-    //os << "** DEBUG **    SET: [";
-    for (auto it = v->_set.begin(); it != v->_set.end(); ++it) {
+void ConcurrentBacklog::print(ostream& os) const {
+    for (auto it = backlog.begin(); it != backlog.end(); ++it) {
         os << " " << *it << ",";
     }
-    os << "]";
-    return os;
+}
+
+int ConcurrentBacklog::size() const {
+    return backlog.size();
+}
+
+void operator<<(ostream &os, ConcurrentBacklog *v) {
+    v->print(os);
 }
