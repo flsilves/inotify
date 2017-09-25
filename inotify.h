@@ -40,9 +40,6 @@ int auditFolder(string &folderPath);
 
 void threadAuditFolder(string folderPath);
 
-template<class T>
-std::ostream &operator<<(std::ostream &os, const std::set<T> &v);
-
 static void displayInotifyEvent(struct inotify_event *iEvent) {
 
     printf(" wd =%2d; ", iEvent->wd);
