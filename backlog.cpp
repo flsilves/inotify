@@ -4,7 +4,7 @@ string ConcurrentBacklog::pop() {
     unique_lock<std::mutex> lock(writeMutex);
 
     while (backlog.empty()) {
-        notEmptyCV.wait(lock);
+        notEmptyCondition.wait(lock);
     }
 
     assert(!backlog.empty());
@@ -22,7 +22,7 @@ size_t ConcurrentBacklog::erase(string value) {
 void ConcurrentBacklog::push(string value) {
     unique_lock<std::mutex> lock(writeMutex);
     backlog.insert(backlog.begin(), value);
-    notEmptyCV.notify_one();
+    notEmptyCondition.notify_one();
 }
 
 void ConcurrentBacklog::print(ostream& os) const {

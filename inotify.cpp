@@ -100,7 +100,7 @@ int auditFolder(string &folderPath) {
 }
 
 void readArguments(const int &argc, const char **argv, int &numberOfThreads,
-                   char *folderPath) { // TODO - number_of_threads not used
+                   char *folderPath) {
 
     struct stat statbuf;
     numberOfThreads = 2;
@@ -129,7 +129,6 @@ void readArguments(const int &argc, const char **argv, int &numberOfThreads,
 
     strcat(folderPath, "/");
 }
-
 
 
 void debug(const char *format, ...) {
