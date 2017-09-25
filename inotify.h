@@ -33,7 +33,7 @@ void threadConsumerLoop();
 
 void threadReaderLoop(string folderPath);
 
-int auditFolder(string &folderPath);
+void auditFolder(string &folderPath);
 
 void threadAuditFolder(string folderPath);
 

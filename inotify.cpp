@@ -62,7 +62,7 @@ void deleteFile(string &filePath) {
     }
 }
 
-int auditFolder(string &folderPath) {
+void auditFolder(string &folderPath) {
 
     DIR *dir = 0;
     struct dirent *ent = 0;
@@ -81,7 +81,7 @@ int auditFolder(string &folderPath) {
             if (stat(filePath.c_str(), &statbuf) != 0) {
                 fprintf(stderr, "ERROR: audit folder -> stat(%s) ", filePath.c_str());
                 perror("");
-                return errno;
+                return;
             }
 
             if (S_ISREG(statbuf.st_mode)) { // check if file isn't a directory and has right permissions
@@ -94,7 +94,7 @@ int auditFolder(string &folderPath) {
     } else {
         fprintf(stderr, "ERROR - auditFolder -> opendir(%s) ", folderPath.c_str());
         perror("");
-        return EXIT_FAILURE;
+        return;
     }
 }
 

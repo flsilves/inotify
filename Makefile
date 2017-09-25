@@ -1,5 +1,5 @@
-CC=g++  
-CFLAGS=-ggdb -I. 
+CC=clang++  
+CFLAGS=-ggdb -I. -std=c++11 
 DEPS = inotify.h backlog.h listener.h
 OBJ = inotify.o backlog.o listener.o
 TARGET = inotify_runner
