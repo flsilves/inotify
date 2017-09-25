@@ -1,10 +1,12 @@
 #include "backlog.h"
 
 string ConcurrentBacklog::pop() {
-    unique_lock<std::mutex> lock(_mutex);
+    unique_lock<std::mutex> lock(writeMutex);
+
     while (backlog.empty()) {
-        _signalingCV.wait(lock);
+        notEmptyCV.wait(lock);
     }
+
     assert(!backlog.empty());
     auto it = backlog.begin();
     string ret = *it;
@@ -13,14 +15,14 @@ string ConcurrentBacklog::pop() {
 }
 
 size_t ConcurrentBacklog::erase(string value) {
-    unique_lock<std::mutex> lock(_mutex);
+    unique_lock<std::mutex> lock(writeMutex);
     return backlog.erase(value);
 }
 
 void ConcurrentBacklog::push(string value) {
-    unique_lock<std::mutex> lock(_mutex);
+    unique_lock<std::mutex> lock(writeMutex);
     backlog.insert(backlog.begin(), value);
-    _signalingCV.notify_one();
+    notEmptyCV.notify_one();
 }
 
 void ConcurrentBacklog::print(ostream& os) const {

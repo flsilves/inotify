@@ -27,4 +27,4 @@ private:
     bool m_bRunning = false;
 };
 
-#endif //TIMER_H
+#endif

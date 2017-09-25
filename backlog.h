@@ -27,8 +27,8 @@ using namespace std;
 class ConcurrentBacklog {
 
 private:
-    std::condition_variable _signalingCV;
-    std::mutex _mutex;
+    std::condition_variable notEmptyCV;
+    std::mutex writeMutex;
     std::set<string> backlog;
 
 public:
