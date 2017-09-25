@@ -5,12 +5,13 @@
 #include <string>
 #include <exception>
 
-struct MyException : public std::exception
-{
-    std::string s;
-    MyException(std::string ss) : s(ss) {}
-    ~MyException() throw () {} // Updated
-    const char* what() const throw() { return s.c_str(); }
+struct MyException : public std::exception {
+    std::string message;
+
+    MyException(std::string input) : message(input) {}
+
+    ~MyException() throw() {}
+    const char *what() const throw() { return message.c_str(); }
 };
 
 #endif

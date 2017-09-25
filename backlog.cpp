@@ -2,8 +2,8 @@
 
 
 ConcurrentBacklog::ConcurrentBacklog() {
+    backlogNotEmpty = PTHREAD_COND_INITIALIZER;
     pMutex.initialize();
-
 }
 
 ConcurrentBacklog::~ConcurrentBacklog() {
@@ -13,10 +13,9 @@ ConcurrentBacklog::~ConcurrentBacklog() {
 string ConcurrentBacklog::pop() {
     MutexAutoLock lk(pMutex);
 
-    // if (backlog.empty()) {
-    //return nullptr ;    //notEmptyCondition.wait(lk);
-    // }
-
+    if(backlog.empty()) {
+        pthread_cond_wait(&backlogNotEmpty, &(pMutex.mutex));
+    }
     assert(!backlog.empty());
     auto it = backlog.begin();
     string ret = *it;
@@ -32,7 +31,7 @@ size_t ConcurrentBacklog::erase(string value) {
 void ConcurrentBacklog::push(string value) {
     MutexAutoLock lk(pMutex);
     backlog.insert(backlog.begin(), value);
-    //notEmptyCondition.notify_one();
+    pthread_cond_signal(&backlogNotEmpty);
 }
 
 void ConcurrentBacklog::print(ostream &os) const {

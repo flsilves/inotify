@@ -5,7 +5,7 @@
 
 #include <thread>
 
-#include <condition_variable>
+
 #include <cstdlib>
 
 #include <dirent.h>
@@ -26,8 +26,8 @@ using namespace std;
 class ConcurrentBacklog {
 
 private:
-    std::condition_variable notEmptyCondition;
     Mutex pMutex;
+    pthread_cond_t backlogNotEmpty;
     std::set<string> backlog;
 
 public:
