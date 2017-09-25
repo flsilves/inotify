@@ -8,7 +8,7 @@
 
 #include "backlog.h"
 #include "inotify.h"
-
+#include "exception.h"
 #include <cstdlib>
 #include <iostream>
 #include <set>

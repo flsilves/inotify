@@ -4,7 +4,7 @@
 #include <iostream>
 
 #include <thread>
-#include <mutex>
+
 #include <condition_variable>
 #include <cstdlib>
 
@@ -14,12 +14,13 @@
 #include <cstring>
 #include <set>
 
+#include "mutex.h"
 #include <sys/inotify.h>
 #include <sys/stat.h>
 #include <sys/select.h>
 #include <sys/time.h>
 #include <unistd.h>
-
+#include "exception.h"
 using namespace std;
 
 class ConcurrentBacklog {
@@ -27,9 +28,12 @@ class ConcurrentBacklog {
 private:
     std::condition_variable notEmptyCondition;
     std::mutex writeMutex;
+    Mutex pMutex;
     std::set<string> backlog;
 
 public:
+    ConcurrentBacklog();
+    ~ConcurrentBacklog();
     void print(ostream &os = std::cout) const;
     int size() const;
     string pop();

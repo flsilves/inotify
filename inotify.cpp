@@ -10,6 +10,8 @@ int main(const int argc, const char *argv[]) {
     int numberOfThreads = 100;
     char folderPathC[PATH_MAX];
 
+
+
     readArguments(argc, argv, numberOfThreads, folderPathC);
     debug("input arguments: PATH:[%s]  NUMBER_OF_THREADS:[%d]\n", folderPathC, numberOfThreads);
 
@@ -42,8 +44,10 @@ void threadConsumerLoop() {
 
     while (true) {
         debug("Consumer thread - Retrieving File... \n");
-        string file_to_delete = fileList.pop();
-        deleteFile(file_to_delete);
+        if(fileList.size() != 0) {
+            string file_to_delete = fileList.pop();
+            deleteFile(file_to_delete);
+        }
     }
 }
 

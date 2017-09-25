@@ -1,10 +1,10 @@
 #ifndef INOTIFY_MUTEX_H
 #define INOTIFY_MUTEX_H
 
-using namespace std;
+
 
 #include <pthread.h>
-
+#include "exception.h"
 
 class Mutex
 {
@@ -22,6 +22,26 @@ private:
 
     bool isInitialized;
     pthread_mutex_t mutex;
+};
+
+class MutexAutoLock
+{
+public:
+
+    MutexAutoLock(Mutex &m) : mutex(m)
+    {
+        mutex.lock();
+    }
+
+    ~MutexAutoLock()
+    {
+        mutex.unlock();
+    }
+
+private:
+    MutexAutoLock(const MutexAutoLock &m);
+
+    Mutex &mutex;
 };
 
 #endif

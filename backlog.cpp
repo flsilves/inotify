@@ -1,11 +1,21 @@
 #include "backlog.h"
 
-string ConcurrentBacklog::pop() {
-    unique_lock<std::mutex> lock(writeMutex);
 
-    while (backlog.empty()) {
-        notEmptyCondition.wait(lock);
-    }
+ConcurrentBacklog::ConcurrentBacklog()  {
+    pMutex.initialize();
+
+}
+
+ConcurrentBacklog::~ConcurrentBacklog() {
+    pMutex.terminate();
+}
+
+string ConcurrentBacklog::pop() {
+    MutexAutoLock lk(pMutex);
+
+   // if (backlog.empty()) {
+    //return nullptr ;    //notEmptyCondition.wait(lk);
+   // }
 
     assert(!backlog.empty());
     auto it = backlog.begin();
@@ -15,14 +25,14 @@ string ConcurrentBacklog::pop() {
 }
 
 size_t ConcurrentBacklog::erase(string value) {
-    unique_lock<std::mutex> lock(writeMutex);
+    MutexAutoLock lk(pMutex);
     return backlog.erase(value);
 }
 
 void ConcurrentBacklog::push(string value) {
-    unique_lock<std::mutex> lock(writeMutex);
+    MutexAutoLock lk(pMutex);
     backlog.insert(backlog.begin(), value);
-    notEmptyCondition.notify_one();
+    //notEmptyCondition.notify_one();
 }
 
 void ConcurrentBacklog::print(ostream& os) const {

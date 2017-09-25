@@ -1,6 +1,6 @@
 #include <pthread.h>
-
-using namespace std;
+#include "mutex.h"
+#include "exception.h"
 
 Mutex::Mutex() :
         isInitialized(false) {
@@ -14,7 +14,7 @@ void Mutex::initialize() {
     if (isInitialized == false) {
         int rc = pthread_mutex_init(&mutex, NULL);
         if (rc != 0) {
-            l
+           throw MyException("Failed to initialize Mutex");
         }
         isInitialized = true;
     }
@@ -23,14 +23,14 @@ void Mutex::initialize() {
 void Mutex::lock() {
     int rc = pthread_mutex_lock(&mutex);
     if (rc != 0) {
-
+        throw MyException("Failed to lock Mutex");
     }
 }
 
 void Mutex::unlock() {
     int rc = pthread_mutex_unlock(&mutex);
     if (rc != 0) {
-
+        throw MyException("Failed to unlock Mutex");
     }
 
 }
@@ -39,8 +39,10 @@ void Mutex::terminate() {
     if (true == isInitialized) {
         int rc = pthread_mutex_destroy(&mutex);
         if (rc != 0) {
-
+            throw MyException("Failed to destroy Mutex");
         }
         isInitialized = false;
     }
 }
+
+

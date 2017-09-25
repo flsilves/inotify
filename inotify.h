@@ -18,7 +18,8 @@
 #include <sys/stat.h>
 #include <sys/select.h>
 #include <sys/time.h>
-
+#include "exception.h"
+#include "mutex.h"
 #define AUDIT_TIMEOUT 2.0
 
 using namespace std;
