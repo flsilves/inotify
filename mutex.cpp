@@ -1,6 +1,5 @@
-#include <pthread.h>
 #include "mutex.h"
-#include "exception.h"
+
 
 Mutex::Mutex() :
         isInitialized(false) {
@@ -9,6 +8,7 @@ Mutex::Mutex() :
 Mutex::~Mutex() {
     terminate();
 }
+
 
 void Mutex::initialize() {
     if (isInitialized == false) {

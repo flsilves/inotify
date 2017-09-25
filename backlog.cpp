@@ -1,6 +1,5 @@
 #include "backlog.h"
 
-
 ConcurrentBacklog::ConcurrentBacklog() {
     backlogNotEmpty = PTHREAD_COND_INITIALIZER;
     pMutex.initialize();

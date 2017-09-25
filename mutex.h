@@ -6,24 +6,27 @@
 
 class Mutex
 {
+    friend class ConcurrentBacklog;
 public:
     Mutex();
     ~Mutex();
-    pthread_mutex_t mutex;
     void initialize();
     void lock();
     void unlock();
     void terminate();
 
+
 private:
     Mutex(const Mutex &m);
-
+    pthread_mutex_t mutex;
     bool isInitialized;
 
 };
 
 class MutexAutoLock
 {
+
+    friend class ConcurrentBacklog;
 public:
 
 
