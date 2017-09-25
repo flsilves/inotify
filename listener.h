@@ -5,7 +5,7 @@
 #define INOTIFY_EVENTS (IN_DELETE | IN_CLOSE_WRITE)
 
 #include <cstring>
-#include "myTimer.h"
+
 #include "backlog.h"
 #include "inotify.h"
 
@@ -39,7 +39,6 @@ public:
     void processBuffer();
 
 private:
-    Timer auditClock;
     ConcurrentBacklog *p_backlog;
     ssize_t unprocessedEvents;
     char eventsBuffer[EVENTS_BUFFER_LENGTH];

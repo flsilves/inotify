@@ -1,8 +1,6 @@
 #ifndef BACKLOG_H
 #define BACKLOG_H
 
-#include "myTimer.h"
-
 #include <iostream>
 
 #include <thread>

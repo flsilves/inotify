@@ -1,7 +1,7 @@
 #ifndef INOTIFY_H
 #define INOTIFY_H
 
-#include "myTimer.h"
+
 #include "backlog.h"
 #include "listener.h"
 
